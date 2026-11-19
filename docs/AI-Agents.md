@@ -94,3 +94,14 @@ Per task: tentukan domain, requirement ID, data exposure, authorization scope, s
 - Google OAuth adalah authentication; Supabase PostgreSQL RLS adalah authorization pada data. Jangan menyamakan keduanya.
 - User yang sukses login belum tentu menjadi anggota organisasi; cek membership aktif, product entitlement, role, scope dan RLS. Default deny.
 - Jangan menaruh service_role di frontend atau melemahkan RLS untuk mengejar kemudahan login.
+
+
+## Cloudflare R2 storage rules — WAJIB
+
+- Gunakan **Cloudflare R2**, bukan Supabase Storage, untuk file baru PortalHub. Supabase Auth + PostgreSQL RLS untuk login/metadata/izin **tidak** otomatis membatasi objek R2.
+- Backend menegakkan org membership, role, product entitlement, entity ownership dan resource scope pada upload intent, download, publish, delete; jangan percaya bucket/key/entity_id dari browser.
+- R2 secret hanya pada backend dan berbeda per environment; jangan gunakan `VITE_` atau `NEXT_PUBLIC_` untuk credential. Bucket private/temp tak boleh punya public URL.
+- Presigned PUT/GET berumur pendek memakai **R2 S3 API hostname**, bukan custom media domain. Scan MIME asli, size, malware dan checksum (bila dipakai) setelah upload sebelum status `ready`; kuota atomik dan cleanup orphan.
+- Media iklan hanya menjadi publik setelah consent + moderasi + sanitasi EXIF; URL file privat jangan masuk HTML publik, sitemap, telemetry atau PWA offline cache.
+- Buat storage adapter, metadata `file_assets` + RLS, tests negatif lintas tenant/property/event, backup R2 terpisah dari DB, lifecycle dan audit.
+- Baca [File-Storage.md](03-data/File-Storage.md) dan [ADR-0003](10-decisions/ADR-0003-cloudflare-r2.md) sebelum membuat modul dokumen atau media.
