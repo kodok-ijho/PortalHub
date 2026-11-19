@@ -17,5 +17,9 @@
 | D013 | Domain awal portalhub.vercel.app, path routing | Usulan teknis |
 | D014 | Harga paket dan kuota gratis numerik | Belum diputuskan |
 | D015 | Payment provider final, SLA, refund, legal Kantong | Perlu validasi |
+| D016 | Cloudflare R2 untuk semua file baru; Supabase PostgreSQL + RLS hanya metadata/izin | **Disepakati 19-11-2026** |
 
 **Aturan change:** buat ADR baru, tandai keputusan terdampak, review kompatibilitas dan keamanan; jangan diam-diam mengubah daftar ini.
+
+
+Referensi D016: [ADR-0003](../10-decisions/ADR-0003-cloudflare-r2.md) dan [File-Storage.md](../03-data/File-Storage.md). Kuota storage, kebijakan retensi, domain media, scanner, dan biaya final perlu validasi.
