@@ -48,3 +48,8 @@ Use append-only ledger and double-entry design for wallet liability and platform
 - Direct QRIS order records Payment history but no Top Up/ledger credit.
 - Exact invoice top-up creates a credit and a matched debit, never a single opaque entry.
 - Tenant staff cannot top up/spend org wallet without grant.
+
+
+## Lampiran platform payments & R2
+
+Lampiran invoice, kuitansi, atau bukti transfer untuk **layanan PortalHub** (jika digunakan) disimpan di private Cloudflare R2 dan ditautkan ke `platform_invoices`/`platform_payments` memakai metadata `file_assets` yang terotorisasi. File upload tidak pernah secara otomatis mengubah status payment settled, menambah saldo Kantong, atau mengaktifkan entitlement; server tetap memerlukan provider verification dan idempotency. [File Storage](../03-data/File-Storage.md).
