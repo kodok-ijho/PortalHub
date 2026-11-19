@@ -16,7 +16,7 @@ flowchart TB
   API --> AUTH[Supabase Auth]
   API --> DB[(PostgreSQL + RLS)]
   PUB --> DB
-  API --> OBJ[(Private/Public Object Storage)]
+  API --> OBJ[(Cloudflare R2: Private/Public/Temp Storage)]
   API --> PAY[Payment provider: platform services ONLY]
   PAY --> WEBHOOK[Verified webhook handler]
   WEBHOOK --> DB
@@ -126,3 +126,14 @@ Mulai dengan monorepo satu codebase. Vercel rewrite dapat memetakan `/iklan/*` k
 Provider payment terpilih, policy Kantong/uang prabayar, komponen SSR final, throughput queue, SLA, data residency, dan personal-data compliance perlu keputusan tersendiri. Lihat `docs/10-decisions`.
 ## Authentication vs Authorization
 Supabase Auth menangani login dengan Google OAuth sebagai metode default; alternatif email OTP/magic link boleh diaktifkan lewat konfigurasi. Setelah login, backend mengecek identitas, membership organisasi, role, resource scope, product entitlements, dan kebijakan. Supabase PostgreSQL Row Level Security (RLS) menegakkan batasan akses data, bukan mekanisme login. Jangan percaya organization_id atau role dari client. Atur callback/redirect allowlist Google OAuth dan Supabase untuk domain Vercel, staging dan produksi secara ketat.
+
+
+## Cloudflare R2 object storage (keputusan resmi)
+
+**Cloudflare R2** menyimpan seluruh file baru PortalHub. Supabase Auth (Google OAuth utama) menangani login, Supabase PostgreSQL + RLS menangani metadata `file_assets`, hubungan entitas `file_links`, kuota, audit dan izin. **RLS tidak menjangkau objek R2**: backend mengecek membership org, product entitlement, role dan resource scope **sebelum setiap upload intent, private download, publish atau delete**.
+
+Logical buckets per environment: `portalhub-{env}-private` untuk bukti pembayaran, kontrak, dokumen sensitif; `portalhub-{env}-temp` untuk upload pending scan/karantina; dan `portalhub-{env}-public` untuk media listing approved. Jangan memberi public domain pada bucket private/temp. Gunakan backend `StorageService` adapter, server-only R2 credentials, dan presigned PUT/GET dengan TTL singkat melalui **R2 S3 API hostname**, bukan custom CDN hostname. Browser perlu CORS terkonfigurasi; CORS bukan authorization.
+
+File upload dianggap siap hanya setelah backend HEAD, verifikasi tipe/ukuran, scanner, dan metadata ready. Foto iklan publik diterbitkan sebagai derivatif yang telah disanitasi dan diizinkan. File privat serta signed URL tidak disimpan di cache PWA. Database backup **tidak** membackup objek R2: lakukan backup dan restore keduanya.
+
+Spesifikasi lengkap: [File-Storage.md](03-data/File-Storage.md), [ADR-0003](10-decisions/ADR-0003-cloudflare-r2.md). Jangan mengadopsi Supabase Storage untuk file baru tanpa ADR revisi; file legacy dapat dimigrasi secara terkendali.
