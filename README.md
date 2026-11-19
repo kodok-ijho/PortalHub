@@ -8,10 +8,10 @@ PortalHub adalah ekosistem SaaS multi-tenant dengan PortalWarga, PortalKos, Port
 
 | Dokumen utama | Kegunaan |
 |---|---|
-| [PRD.md](PRD.md) | Kebutuhan produk, user stories, acceptance criteria |
-| [Design-System.md](Design-System.md) | Design tokens, layout desktop/mobile, aksesibilitas |
-| [Architecture.md](Architecture.md) | Komponen teknis, integrasi, deployment, isolasi tenant |
-| [AI-Agents.md](AI-Agents.md) | Aturan AI coding agent dan definisi selesai |
+| [PRD.md](docs/PRD.md) | Kebutuhan produk, user stories, acceptance criteria |
+| [Design-System.md](docs/Design-System.md) | Design tokens, layout desktop/mobile, aksesibilitas |
+| [Architecture.md](docs/Architecture.md) | Komponen teknis, integrasi, deployment, isolasi tenant |
+| [AI-Agents.md](docs/AI-Agents.md) | Aturan AI coding agent dan definisi selesai |
 | [docs/README.md](docs/README.md) | Indeks dokumen pelengkap |
 
 ## Keputusan produk yang sudah disepakati

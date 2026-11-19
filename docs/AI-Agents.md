@@ -5,7 +5,7 @@
 ## Context wajib dibaca
 
 1. `README.md`, `PRD.md`, `Design-System.md`, `Architecture.md`.
-2. `docs/04-security/RBAC.md`, `docs/05-billing/Kantong-and-Payments.md`, `docs/03-data/Data-Model.md`.
+2. `04-security/RBAC.md`, `05-billing/Kantong-and-Payments.md`, `03-data/Data-Model.md`.
 3. ADR terkait, file test, dan source yang sedang diubah; cek ulang dokumentasi legacy bila menyentuh PortalWarga.
 
 ## Golden rules

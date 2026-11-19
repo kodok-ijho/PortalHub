@@ -102,7 +102,7 @@ Pengurus warga dan pemilik properti sering memakai spreadsheet terpisah untuk ru
 
 ## 7. Delivery & release gates
 
-**Fase fondasi:** identity, tenant, role/scopes, product catalog, service order & subscription, Kantong. **Fase marketplace publik:** katalog + SEO + kuota gratis. **Integrasi iklan:** PortalKos dahulu, PortalWarga kemudian. **Monetisasi lanjutan:** paket, promosi, auto-renew iklan. Detail di `docs/09-delivery/Roadmap.md`.
+**Fase fondasi:** identity, tenant, role/scopes, product catalog, service order & subscription, Kantong. **Fase marketplace publik:** katalog + SEO + kuota gratis. **Integrasi iklan:** PortalKos dahulu, PortalWarga kemudian. **Monetisasi lanjutan:** paket, promosi, auto-renew iklan. Detail di `09-delivery/Roadmap.md`.
 
 **Go/no-go:** isolasi RLS, payment idempotency, backup+restore, SEO public SSR, pengujian hak akses event, dan verifikasi langkah migrasi legacy harus lulus sebelum produksi.
 

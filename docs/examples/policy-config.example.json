@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "platform_mandatory": {"require_tenant_isolation": true, "require_sensitive_role_checks": true, "audit_policy_changes": true},
+  "product_defaults": {"portalkos": "automatic", "portalwarga": "approval", "portaliklan_advertiser": "approval"},
+  "allowed_activation_modes": ["automatic", "approval", "invite_only"],
+  "note": "Contoh konfigurasi; org override hanya melalui admin platform berwenang"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "example-service-order-id",
+  "organization_id": "example-org-id",
+  "items": [{"product_code":"portalkos","sku":"subscription-monthly","quantity":1}],
+  "amount_minor": 100000,
+  "currency": "IDR",
+  "status": "pending_payment",
+  "payment_choice": "direct_qris",
+  "idempotency_key": "sample-unique-client-operation-key",
+  "note": "Contoh kontrak konsep, bukan API atau nominal produksi"
+}
