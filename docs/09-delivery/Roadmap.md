@@ -39,3 +39,17 @@ Every ticket needs acceptance criteria, tests, DB migration and permission check
 - **STO-006:** Backup object R2 + DB restore bersama; security tests unauthorized access, quotas, malware dan expiry.
 
 **Release gate:** private object tidak dapat diakses pengguna tidak berhak, public listing tidak membocorkan draft/private, biaya/retensi/backup diketahui dan teruji. [File Storage](../03-data/File-Storage.md).
+
+
+## Penguatan dependensi implementasi (audit)
+
+- **SEC-002** [Google Auth & SSO](../04-security/Auth-and-SSO.md), callback/session, invitation and verified self-link; 0/1/multi-context tests.
+- **SEC-003** [Permission Matrix](../04-security/Permission-Matrix.md), [RLS Policy Spec](../04-security/RLS-Policy-Spec.md): org owner **bukan** otomatis event treasurer; role/scoped negative tests sebelum UI.
+- **DB-001** [Database Schema](../03-data/Database-Schema.md): numbered migrations, composite tenant constraints, indexes, SQL RLS implementation and migration rollback in staging.
+- **BILL-004** [Subscription Lifecycle](../05-billing/Subscription-Lifecycle.md) + [Payment State Machines](../05-billing/Payment-and-Wallet-State-Machines.md): direct settled vs atomic wallet debit, idempotency, reconciliation & legal gate.
+- **API-001** [Draft OpenAPI](../08-operations/OpenAPI.yaml): implement endpoints contract-first and expand per product; do not equate spec with working API.
+- **KOS-002 / WARGA-002 / ADS-002**: detailed [Kos Rules](../06-products/PortalKos-Business-Rules.md), [Warga Finance Rules](../06-products/PortalWarga-Finance-Rules.md), [Ads Publishing Rules](../06-products/PortalIklan-Publishing-Rules.md).
+- **OPS-001** [Notifications & Jobs](../02-architecture/Notifications-and-Jobs.md), [Privacy](../03-data/Data-Retention-and-Privacy.md), [DR](../08-operations/Disaster-Recovery.md), [Development Setup](../08-operations/Development-Setup.md).
+- **QA-001** Update [Requirements Traceability](Requirements-Traceability.md) for each accepted ticket with commit, test and UAT evidence.
+
+**No credentials included or requested in these docs.** Production launch still gated by pricing, legal/provider and security approval.

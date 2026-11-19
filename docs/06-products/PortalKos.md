@@ -30,3 +30,8 @@ Read own lease, bills, payment record, notices, complaints. No read access to ot
 ## Dokumen dan foto dengan Cloudflare R2
 
 Kontrak sewa, dokumen penyewa, lampiran maintenance dan bukti transfer disimpan private di R2; metadata, org/property/lease/payment link dan izin berada di Supabase PostgreSQL + RLS. Tenant hanya dapat akses kontrak/bukti miliknya; petugas hanya pada properti assigned. Public listing hanya dapat memakai foto derivatif yang telah di-opt-in pemilik, di-scan dan dimoderasi; jangan menyalin identitas/kontrak ke bucket publik. [File Storage](../03-data/File-Storage.md).
+
+
+## Detailed implementation reference
+
+Perhitungan unit, lease overlaps, tagihan, pembayaran manual, laporan, okupansi dan sinkronisasi listing dijelaskan di [PortalKos Business Rules](PortalKos-Business-Rules.md). Jangan mengarang prorata, deposit refund, denda atau grace period karena masih memerlukan keputusan bisnis. Role dan file mengikuti [Permission Matrix](../04-security/Permission-Matrix.md).

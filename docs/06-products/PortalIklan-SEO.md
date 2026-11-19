@@ -34,3 +34,8 @@ Search impressions/clicks from verified analytics, organic landing pages, listin
 ## Cloudflare R2 public listing media
 
 Foto iklan masuk bucket private/temp R2 hingga diverifikasi ukuran/MIME, scan, consent dan moderasi. Hanya gambar derivatif yang disanitasi (EXIF lokasi dihapus) yang diterbitkan ke **public R2 bucket**. URL publik memakai custom CDN domain Cloudflare saat tersedia; jangan embed signed private URL pada HTML SSR, sitemap, metadata OG atau structured data. Saat listing berakhir/unpublish, jalankan takedown & cache invalidation; foto publik dengan key berversi dan alt text yang tepat. Kuota & pemrosesan gambar dipantau. [File Storage](../03-data/File-Storage.md).
+
+
+## Detailed publication reference
+
+Status moderation/publishing, free quota/expiry, consent, opt-in renewals, source vacancy sync dan R2 public projection dijelaskan di [PortalIklan Publishing Rules](PortalIklan-Publishing-Rules.md). Job async mengacu pada [Notifications & Jobs](../02-architecture/Notifications-and-Jobs.md). Tidak ada checkout pembeli-penjual melalui PortalHub.

@@ -39,3 +39,8 @@ If provider callback invalid or provider unreachable: keep order pending, never 
 - Rotasi credential, audit secret scope dan rollback. Presigned GET/PUT TTL pendek, jangan log signed URL atau lampiran sensitif. Uji takedown dari CDN public dan non-leak PWA.
 
 [File Storage](../03-data/File-Storage.md) · [ADR-0003](../10-decisions/ADR-0003-cloudflare-r2.md).
+
+
+## Extended runbooks (design only)
+
+Developer bootstrap: [Development Setup](Development-Setup.md). Incident & recovery: [Disaster Recovery](Disaster-Recovery.md). Durable job delivery, dead letters, retries: [Notifications and Jobs](../02-architecture/Notifications-and-Jobs.md). Personal-data retention/erasure policy: [Data Retention & Privacy](../03-data/Data-Retention-and-Privacy.md). Financial idempotency/reconciliation: [Payment State Machines](../05-billing/Payment-and-Wallet-State-Machines.md). **Tidak menampilkan/mengelola credential dalam dokumentasi.**

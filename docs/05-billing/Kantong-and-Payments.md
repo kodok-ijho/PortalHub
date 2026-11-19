@@ -53,3 +53,8 @@ Use append-only ledger and double-entry design for wallet liability and platform
 ## Lampiran platform payments & R2
 
 Lampiran invoice, kuitansi, atau bukti transfer untuk **layanan PortalHub** (jika digunakan) disimpan di private Cloudflare R2 dan ditautkan ke `platform_invoices`/`platform_payments` memakai metadata `file_assets` yang terotorisasi. File upload tidak pernah secara otomatis mengubah status payment settled, menambah saldo Kantong, atau mengaktifkan entitlement; server tetap memerlukan provider verification dan idempotency. [File Storage](../03-data/File-Storage.md).
+
+
+## Detailed execution reference
+
+[Payment-and-Wallet-State-Machines.md](Payment-and-Wallet-State-Machines.md) adalah spesifikasi detail idempotency, settlement, atomic debit, state recovery dan three histories. [Subscription-Lifecycle.md](Subscription-Lifecycle.md) mengatur trial/expiry/renewal/grace dan keterbatasan. **Checkout via Kantong yang saldonya sudah settled cukup membutuhkan debit atomik berhasil, bukan webhook provider baru.** Namun untuk direct payment dan top-up, provider settlement tetap harus terverifikasi. Kebijakan hukum/pajak/provider Kantong masih belum disahkan untuk produksi.

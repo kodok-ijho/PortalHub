@@ -1,32 +1,89 @@
 # PortalHub — Indeks Dokumentasi
 
-Semua spesifikasi teknis dan produk PortalHub ada di folder `docs/`.
+**Status:** spesifikasi desain dan baseline implementasi, **bukan** aplikasi yang telah di-deploy. Pembaruan kelengkapan 19 November 2026. Sebagian aturan (harga, kebijakan Kantong, SLA, retensi) sengaja tetap **TBD** sampai disetujui. **Bagian credential tidak termasuk ruang lingkup dokumentasi ini.**
+
+Kembali ke [README proyek](../README.md) · [Pemetaan requirement ke tes](09-delivery/Requirements-Traceability.md) · [Instruksi coding agent](../AGENTS.md).
 
 ## Dokumen utama
 
-- [PRD](PRD.md) — requirement, tujuan, non-goals dan acceptance criteria.
-- [Design System](Design-System.md) — UX/UI Clean Minimal, mobile-first, desktop dan PWA.
-- [Architecture](Architecture.md) — sistem multi-tenant, keamanan, billing, integrasi.
-- [AI Agents](AI-Agents.md) — arahan AI coding agent.
-- [README proyek](../README.md) — ringkasan proyek.
-
-## Dokumen pelengkap
-
 | Area | Dokumen |
 |---|---|
-| Keputusan | [Decisions](00-product/Decisions.md), [ADR 0001](10-decisions/ADR-0001-modular-monolith.md), [ADR 0002](10-decisions/ADR-0002-wallet.md), **[ADR 0003 — Cloudflare R2](10-decisions/ADR-0003-cloudflare-r2.md)** |
-| Produk & rilis | [MVP and Release](01-product/MVP-and-Release.md) |
-| Arsitektur & migrasi | [Workflows](02-architecture/Workflows.md), [Routing](02-architecture/Routing-Deployment.md), [Legacy Migration](02-architecture/Legacy-Migration.md) |
-| Data & file storage | [Data Model](03-data/Data-Model.md), [ERD](03-data/ERD.md), **[File Storage (Cloudflare R2)](03-data/File-Storage.md)** |
-| Security | [RBAC](04-security/RBAC.md), [Security & Privacy](04-security/Security-Privacy.md) |
-| Billing | [Kantong & Payments](05-billing/Kantong-and-Payments.md), [Operational Finance](05-billing/Operational-Finance.md) |
-| Produk | [PortalKos](06-products/PortalKos.md), [PortalWarga](06-products/PortalWarga.md), [PortalIklan SEO](06-products/PortalIklan-SEO.md) |
-| UX | [Routes & Journeys](07-ux/Routes-and-Journeys.md) |
-| Operasi & API | [API Contract](08-operations/API-Contract.md), [DevOps Runbook](08-operations/DevOps-Runbook.md) |
-| Delivery | [Roadmap](09-delivery/Roadmap.md), [Test Plan](09-delivery/Test-Plan.md) |
-| Examples | [Service Order](contracts/service-order.example.json), [Policy Config](examples/policy-config.example.json) |
+| Produk | [PRD](PRD.md) |
+| Desain UI/PWA | [Design System](Design-System.md) |
+| Arsitektur | [Architecture](Architecture.md) |
+| Coding agent | [AI Agents](AI-Agents.md) dan [root AGENTS.md](../AGENTS.md) |
+| Status cakupan | [Requirements Traceability](09-delivery/Requirements-Traceability.md) |
 
-**Catatan:** rancangan awal; parameter harga, payment provider dan keputusan legal belum final.
+## 00 — Keputusan dan 01 — Rencana rilis
 
+- [Decision Register](00-product/Decisions.md)
+- [MVP and Release Gates](01-product/MVP-and-Release.md)
+- [ADR-0001 Modular Monolith](10-decisions/ADR-0001-modular-monolith.md)
+- [ADR-0002 Kantong](10-decisions/ADR-0002-wallet.md)
+- [ADR-0003 Cloudflare R2](10-decisions/ADR-0003-cloudflare-r2.md)
 
-**Keputusan storage:** Cloudflare R2 untuk objek file privat/publik, Supabase PostgreSQL + RLS untuk metadata/izin. Rujukan: [File-Storage.md](03-data/File-Storage.md) dan [ADR-0003](10-decisions/ADR-0003-cloudflare-r2.md).
+## 02 — Arsitektur, workflow dan migrasi
+
+- [Business Workflows](02-architecture/Workflows.md)
+- [Routing & Deployment](02-architecture/Routing-Deployment.md)
+- [Notifications, Scheduled Jobs & Outbox](02-architecture/Notifications-and-Jobs.md)
+- [Legacy PortalWarga Migration](02-architecture/Legacy-Migration.md)
+
+## 03 — Database, file & privacy
+
+- [Database Schema Blueprint](03-data/Database-Schema.md)
+- [Logical Data Model](03-data/Data-Model.md)
+- [High-Level ERD](03-data/ERD.md)
+- [Cloudflare R2 File Storage](03-data/File-Storage.md)
+- [Data Retention & Privacy](03-data/Data-Retention-and-Privacy.md)
+
+## 04 — Auth dan keamanan
+
+- [Auth & SSO: Supabase Google Login](04-security/Auth-and-SSO.md)
+- [RBAC Baseline](04-security/RBAC.md)
+- [Permission Matrix](04-security/Permission-Matrix.md)
+- [RLS Policy Spec](04-security/RLS-Policy-Spec.md)
+- [Security & Privacy](04-security/Security-Privacy.md)
+
+## 05 — Billing / Kantong / keuangan operasional
+
+- [Kantong & Payments](05-billing/Kantong-and-Payments.md)
+- [Subscription Lifecycle](05-billing/Subscription-Lifecycle.md)
+- [Payment & Wallet State Machines](05-billing/Payment-and-Wallet-State-Machines.md)
+- [Operational Finance — Record Only](05-billing/Operational-Finance.md)
+
+## 06 — Produk dan business rules
+
+- [PortalKos](06-products/PortalKos.md) · [PortalKos Business Rules](06-products/PortalKos-Business-Rules.md)
+- [PortalWarga](06-products/PortalWarga.md) · [PortalWarga Finance Rules](06-products/PortalWarga-Finance-Rules.md)
+- [PortalIklan & SEO](06-products/PortalIklan-SEO.md) · [PortalIklan Publishing Rules](06-products/PortalIklan-Publishing-Rules.md)
+
+## 07 — UX & routes
+
+- [Routes & User Journeys](07-ux/Routes-and-Journeys.md)
+- [Screen Specifications](07-ux/Screen-Specifications.md)
+
+## 08 — API dan operasional
+
+- [API Contract Narrative](08-operations/API-Contract.md)
+- [Draft OpenAPI 3.1 Contract](08-operations/OpenAPI.yaml)
+- [Development Setup Blueprint](08-operations/Development-Setup.md)
+- [DevOps Runbook](08-operations/DevOps-Runbook.md)
+- [Disaster Recovery](08-operations/Disaster-Recovery.md)
+
+## 09 — Delivery dan testing
+
+- [Delivery Roadmap](09-delivery/Roadmap.md)
+- [Test Plan / UAT](09-delivery/Test-Plan.md)
+- [Requirements Traceability](09-delivery/Requirements-Traceability.md)
+
+## Contoh kontrak
+
+- [Service Order JSON Example](contracts/service-order.example.json)
+- [Policy Config JSON Example](examples/policy-config.example.json)
+
+## Batasan penting
+
+Google OAuth melalui Supabase Auth adalah login utama, sedangkan Supabase PostgreSQL RLS + API menegakkan hak akses. Cloudflare R2 menyimpan objek file; RLS hanya melindungi metadata DB, sehingga backend harus memeriksa izin sebelum URL privat dibuat. **IPL, sewa dan dana event hanya dicatat** sebagai pembayaran di luar platform; payment gateway dan Kantong hanya untuk layanan PortalHub sendiri.
+
+Setiap file berlabel *proposed*, *draft*, *TBD* atau *not implemented* tidak boleh dianggap keputusan produksi. Belum ada implementasi, migrations, credential ataupun CI yang dinyatakan siap tanpa bukti terverifikasi.

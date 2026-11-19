@@ -30,3 +30,8 @@ Owner marks unit vacant and opts in → selects which info may be public → pre
 Warga/penyewa login Google → pilih pembayaran/kontrak/event yang berhak diakses → API authorize dan reservasi kuota → short-lived presigned PUT R2 → browser upload → server memeriksa file dan scan → tampil status `ready` atau `ditolak` → bendahara memverifikasi **pembayaran** pada langkah terpisah.
 
 Download privat memperoleh signed GET baru setelah API mengulang check permission. Browser tidak menyimpan file/URL sensitif dalam cache offline. Foto iklan publik hanya setelah owner opt-in dan moderasi. [File Storage](../03-data/File-Storage.md).
+
+
+## Detailed screen contract
+
+Lihat [Screen Specifications](Screen-Specifications.md) untuk loading/empty/forbidden/offline state, aksesibilitas, Google OAuth flow, Kantong 3 tab, verifikasi manual, upload R2 dan public SEO. Route slug tidak pernah menggantikan security check.

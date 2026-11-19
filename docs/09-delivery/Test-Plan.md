@@ -51,3 +51,25 @@ All P0 pass; zero critical security/privacy/payment defects; audit/rollback demo
 | STO-12 | R2 secret di frontend bundle/telemetry | Security check gagal; credential hanya server |
 
 Browser CORS dan S3 presigned hostname harus diuji di staging; jangan menggantungkan tes izin hanya pada RLS metadata. [File Storage](../03-data/File-Storage.md).
+
+
+## Tambahan verifikasi audit spesifikasi
+
+| ID | Test | Hasil wajib |
+|---|---|---|
+| AUTH-01 | Google OAuth callback dengan unsafe return path | Ditolak, tidak open redirect |
+| AUTH-02 | User baru login tanpa membership | Onboarding only, no tenant data |
+| AUTH-03 | Invitation token replay/expired/email mismatch | Ditolak dan diaudit |
+| RBAC-01 | Org owner tanpa event-specific grant membaca kas event | Denied (bukan implicit owner grant) |
+| RLS-01 | Forbidden SELECT/INSERT/UPDATE/DELETE lintas org/property/event | Denied server+DB |
+| RLS-02 | Client mengubah organization_id atau role assignment | No privilege escalation |
+| DB-01 | Cross-tenant FK injected into lease/account/file | DB constraint rejects |
+| BILL-01 | Bayar subscription dari Kantong yang sudah funded | Atomic debit + entitlement once **tanpa webhook provider baru** |
+| BILL-02 | Direct provider payment settled | Verified webhook + fulfillment once |
+| BILL-03 | Exact top-up succeeds but wallet spend fails | Top-up credit retained, no unauthorized charge |
+| BILL-04 | Double webhook, parallel renew, timeout after ledger commit | At-most-one posting, recoverable via outbox |
+| ADS-01 | Unit occupied and listing published | Durable unavailable sync, no misleading vacancy claim |
+| OPS-01 | Duplicate jobs, dead-letter recovery | Idempotent side effect, visible incident trail |
+| DR-01 | Restore Supabase database and R2 objects | Links/checksums/auth/quota consistent |
+
+Coverage mapping: [Requirements Traceability](Requirements-Traceability.md). Draft API [OpenAPI](../08-operations/OpenAPI.yaml) needs schema/lint and contract tests after implementation. All rows currently **planned**, not executed.

@@ -24,3 +24,8 @@ Advertiser must approve public photo, phone, city/area; no automatic publication
 ## Dokumen warga/event & bukti IPL — Cloudflare R2
 
 Simpan bukti transfer IPL, lampiran kas, surat organisasi, dokumen rumah dan event di R2 private. Metadata dalam Supabase dengan scope rumah/blok/event; akses baca/tulis harus diverifikasi backend per file, bukan sekadar role global. Panitia event tidak mendapat akses kas utama secara implisit. Foto usaha warga untuk PortalIklan perlu consent, moderasi, sanitasi dan salinan media publik terpisah. Berkas privat PortalWarga legacy harus diaudit sebelum migrasi. [File Storage](../03-data/File-Storage.md).
+
+
+## Detailed implementation reference
+
+Aturan IPL, kas umum/event, verifikasi internal, transfer berpasangan dan konsolidasi tanpa double-count ada di [PortalWarga Finance Rules](PortalWarga-Finance-Rules.md). Penanggung jawab kas event perlu grant eksplisit sesuai [Permission Matrix](../04-security/Permission-Matrix.md); owner organisasi tidak otomatis menjadi event treasurer.

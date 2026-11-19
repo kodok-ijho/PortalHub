@@ -40,7 +40,7 @@ Error: `{ "ok": false, "data": null, "error": {"code":"FORBIDDEN","message":"Tid
 - Checkout success URL is informational only; actual fulfillment comes from verified provider result.
 - Use pagination, stable cursor, validation and rate limits; private endpoints no-cache.
 
-Full OpenAPI schema is a **future implementation deliverable**, not falsely represented as complete here.
+Draft machine-readable [OpenAPI.yaml](OpenAPI.yaml) **sudah tersedia** sebagai starting contract (sebagian endpoint dasar). Ini **bukan** full production OpenAPI/endpoint siap dijalankan; schema, error mapping dan provider-specific callback perlu diperdalam dan diuji saat implementasi.
 
 
 ## Cloudflare R2 — API contract file (design, belum implementasi)
@@ -56,3 +56,8 @@ Full OpenAPI schema is a **future implementation deliverable**, not falsely repr
 | GET | `/organizations/:id/storage-usage` | Owner/billing manager, quota used/reserved per kategori |
 
 Prefix versi `/api/v1`, request-id dan idempotency untuk upload; error `INVALID_FILE_TYPE`, `FILE_TOO_LARGE`, `FILE_NOT_READY`, `STORAGE_QUOTA_EXCEEDED`, `FILE_QUARANTINED`. Client tidak boleh memilih bucket/key atau mengirim credential R2. RLS **hanya berlaku di database**; permission untuk signed URL dievaluasi server. Presigned S3 tidak berlaku pada custom domain CDN. [File Storage](../03-data/File-Storage.md).
+
+
+## Contract-first implementation checklist
+
+[Draft OpenAPI 3.1](OpenAPI.yaml) memetakan onboarding, contexts, wallet, service orders/checkout, subscription renewals, public ads dan file R2. Tambahkan endpoint Kos/Warga detail dan provider-specific webhook schema setelah perancangan domain disetujui. CI harus memvalidasi spec YAML/OpenAPI, compatibility, response envelope/error semantics dan negative authorization tests. Jangan klaim endpoint deployed hanya karena spec tersedia.
