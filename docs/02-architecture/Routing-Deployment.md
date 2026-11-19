@@ -27,3 +27,10 @@
 ## PWA caching
 
 Cache hanya app shell dan asset statis. Jangan menyimpan API tenant, Kantong, bukti bayar, PII sebagai public offline cache. Gunakan network-only untuk endpoint finansial. Clear caches on logout/context switch. Perhatikan batasan push di browser.
+
+
+## File / media routing — Cloudflare R2
+
+Aplikasi mengakses API `/api/v1/files/*` di Vercel (server protected), yang membuat short-lived **R2 S3 API presigned PUT/GET** sesudah cek permission. R2 presigned URL **bukan** URL custom CDN domain. Browser CORS harus mengizinkan origin dev/staging/prod yang tepat; CORS tidak memberikan hak akses.
+
+Media iklan approved dapat diakses publik melalui custom domain Cloudflare (mis. `media.portalhub.id`, **belum disiapkan**) dengan cache. `r2.dev` hanya untuk penggunaan non-produksi. Private bucket tidak pernah dibuka via CDN. Jangan cache signed URL atau file pribadi di PWA. [File Storage](../03-data/File-Storage.md).
