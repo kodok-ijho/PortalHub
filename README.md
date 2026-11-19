@@ -173,3 +173,12 @@ Setiap perubahan implementasi harus mengacu pada [Roadmap](docs/09-delivery/Road
 **Referensi kode yang sudah ada:** [kodok-ijho/PortalWarga](https://github.com/kodok-ijho/PortalWarga). Repository tersebut merupakan **legacy/reference** untuk evaluasi reuse; jangan menganggap seluruh implementasinya otomatis memenuhi arsitektur multi-tenant PortalHub.
 
 **Lisensi:** belum ditetapkan dalam repository ini; penetapan lisensi dan hak penggunaan ulang kode harus diselesaikan sebelum distribusi yang membutuhkan izin eksplisit.
+
+
+## Cloudflare R2 — Bukti transfer, dokumen, dan media iklan
+
+**Keputusan penyimpanan:** seluruh file baru PortalHub menggunakan Cloudflare R2. File privat seperti bukti transfer IPL/sewa/event, kontrak, surat dan dokumen organisasi ditempatkan di bucket **private**. Foto iklan yang telah memperoleh izin dan lolos moderasi disajikan dari bucket **public**; unggahan belum tervalidasi ada di bucket **temp**. Setiap environment memakai bucket dan secret terpisah.
+
+Supabase **tidak menyimpan byte file**: Supabase Auth mengelola login, PostgreSQL + RLS menyimpan metadata dan izin. RLS **tidak otomatis berlaku untuk object R2**, sehingga API selalu memeriksa organisasi, produk, role, dan scope sebelum menerbitkan presigned URL. Credential R2 hanya di backend. Backup file dan database perlu diuji secara bersamaan.
+
+Baca [File-Storage.md](docs/03-data/File-Storage.md) dan [ADR-0003 — Cloudflare R2](docs/10-decisions/ADR-0003-cloudflare-r2.md).
