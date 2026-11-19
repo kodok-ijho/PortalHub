@@ -25,3 +25,8 @@ Desktop: combined KPI + filters/tables, drill down by property. Mobile: compact 
 ## Tenant portal
 
 Read own lease, bills, payment record, notices, complaints. No read access to other tenant data; tenant may hold more than one lease. Never accept tenant ID directly from browser as sole auth filter.
+
+
+## Dokumen dan foto dengan Cloudflare R2
+
+Kontrak sewa, dokumen penyewa, lampiran maintenance dan bukti transfer disimpan private di R2; metadata, org/property/lease/payment link dan izin berada di Supabase PostgreSQL + RLS. Tenant hanya dapat akses kontrak/bukti miliknya; petugas hanya pada properti assigned. Public listing hanya dapat memakai foto derivatif yang telah di-opt-in pemilik, di-scan dan dimoderasi; jangan menyalin identitas/kontrak ke bucket publik. [File Storage](../03-data/File-Storage.md).
