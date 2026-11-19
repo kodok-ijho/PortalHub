@@ -31,3 +31,10 @@ Escrow, payment gateway untuk sewa/IPL, dompet transfer P2P, mobile native, book
 3. Backups tested + rollback runbook.
 4. Budget/reports event and manual payment reconciliation tested.
 5. PWA offline privacy + SEO public HTML validated.
+
+
+## Storage release gate (P0 lintas produk)
+
+Sebelum mengaktifkan unggahan bukti transfer/kontrak/dokumen, wajib ada R2 private/temp bucket terisolasi per environment, backend API otorisasi signed PUT/GET, tabel `file_assets`/RLS, scan/quarantine, kuota, cleanup orphan dan backup restore DB+R2. Media iklan publik punya bucket dan moderation tersendiri.
+
+Gate produksi: negative tests lintas org/property/event, presigned URL expiry, file MIME/size/malware, public-leak, quota racing, retention & restore berhasil. Lihat [File Storage](../03-data/File-Storage.md).
