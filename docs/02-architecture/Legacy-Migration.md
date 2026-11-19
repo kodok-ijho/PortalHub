@@ -33,3 +33,8 @@
 7. Keep legacy app unchanged until separate migration authorization.
 
 **Open issue:** existing payment statuses/webhooks must be mapped to new manual-recording semantics transparently; do not falsify financial history.
+
+
+## Migrasi lampiran dari PortalWarga legacy ke Cloudflare R2
+
+Audit dan inventaris storage/file legacy **yang benar-benar ada**, termasuk path referensi pembayaran, dokumen warga dan event. Pindahkan file secara idempotent ke R2 **private** dengan object key UUID, mapping `file_assets`/`file_links`, pemeriksaan checksum/size, scanning, dan RLS/API isolation tests. Jangan mengganti file privat legacy dengan URL publik. Jangan hapus byte/file lama sebelum source-target reconciliation, sign-off, rollback dan retention selesai. Baca [File Storage](../03-data/File-Storage.md).
