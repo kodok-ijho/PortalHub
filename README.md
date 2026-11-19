@@ -138,10 +138,34 @@ Baca [File-Storage.md](docs/03-data/File-Storage.md) dan [ADR-0003 — Cloudflar
 | Migrasi dari PortalWarga sebelumnya | [Legacy-Migration.md](docs/02-architecture/Legacy-Migration.md) |
 | Catatan keputusan arsitektur | [ADR-0001](docs/10-decisions/ADR-0001-modular-monolith.md) · [ADR-0002](docs/10-decisions/ADR-0002-wallet.md) · [ADR-0003 R2](docs/10-decisions/ADR-0003-cloudflare-r2.md) |
 
+## Panduan implementasi yang sudah diperdalam
+
+Dokumentasi telah diperluas setelah audit menyeluruh. `docs/` tetap menjadi sumber spesifikasi; **source code, SQL migrations, dan API yang benar-benar berjalan belum tersedia**.
+
+| Fokus | Dokumen implementasi |
+| --- | --- |
+| Supabase Google Login & sesi | [Auth-and-SSO.md](docs/04-security/Auth-and-SSO.md) |
+| Hak akses & RLS per tabel | [Permission-Matrix.md](docs/04-security/Permission-Matrix.md) · [RLS-Policy-Spec.md](docs/04-security/RLS-Policy-Spec.md) |
+| Blueprint database | [Database-Schema.md](docs/03-data/Database-Schema.md) |
+| Subscription, state payment & Kantong | [Subscription-Lifecycle.md](docs/05-billing/Subscription-Lifecycle.md) · [Payment-and-Wallet-State-Machines.md](docs/05-billing/Payment-and-Wallet-State-Machines.md) |
+| Kontrak API | [OpenAPI.yaml](docs/08-operations/OpenAPI.yaml) (**draft**, belum deployed) |
+| Aturan PortalKos, Warga, Iklan | [Kos Rules](docs/06-products/PortalKos-Business-Rules.md) · [Warga Finance Rules](docs/06-products/PortalWarga-Finance-Rules.md) · [Ads Publishing Rules](docs/06-products/PortalIklan-Publishing-Rules.md) |
+| Background jobs & notifikasi | [Notifications-and-Jobs.md](docs/02-architecture/Notifications-and-Jobs.md) |
+| Data retention dan privasi | [Data-Retention-and-Privacy.md](docs/03-data/Data-Retention-and-Privacy.md) |
+| Spesifikasi layar | [Screen-Specifications.md](docs/07-ux/Screen-Specifications.md) |
+| Persiapan dev & disaster recovery | [Development-Setup.md](docs/08-operations/Development-Setup.md) · [Disaster-Recovery.md](docs/08-operations/Disaster-Recovery.md) |
+| Requirement → desain → tes | [Requirements-Traceability.md](docs/09-delivery/Requirements-Traceability.md) |
+| Instruksi agent | [AGENTS.md](AGENTS.md) · [docs/AI-Agents.md](docs/AI-Agents.md) |
+
+**Perbaikan aturan yang penting:** pemilik organisasi tidak otomatis dapat membaca/mengubah kas event tanpa role assignment yang sesuai; subscription dapat aktif melalui **debit Kantong yang settled dan atomik** ataupun pembayaran langsung yang sudah diverifikasi provider.
+
+**Kecualikan bagian credential:** dokumen tidak berisi nilai token, password, key, atau akses infrastruktur. Harga, provider final, kebijakan hukum Kantong, retention period dan SLA tetap menunggu keputusan.
+
 ## Struktur repository saat ini
 
 ```text
 PortalHub/
+├── AGENTS.md                # Petunjuk masuk AI coding agent
 ├── README.md                # Halaman pengantar ini
 ├── .gitignore
 └── docs/
