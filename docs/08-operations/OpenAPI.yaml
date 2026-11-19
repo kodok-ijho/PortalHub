@@ -1,0 +1,665 @@
+openapi: 3.1.0
+info:
+  title: PortalHub API — Design Contract
+  version: 0.2.0-draft
+  description: |
+    Rancangan kontrak API v1, bukan endpoint yang sudah berjalan.
+    Payment gateway hanya untuk layanan PortalHub, bukan IPL/sewa/event.
+    Cloudflare R2 untuk file; permission server+Supabase PostgreSQL RLS.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: Identity
+  - name: Organizations
+  - name: Billing
+  - name: Storage
+  - name: Ads
+paths:
+  /me/contexts:
+    get:
+      tags: [Identity]
+      summary: List authorized org/product contexts for authenticated user
+      operationId: listMyContexts
+      responses:
+        "200":
+          description: Authorized contexts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContextListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /organizations:
+    post:
+      tags: [Organizations]
+      summary: Start organization onboarding under effective policy
+      operationId: createOrganization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, product_code]
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 160
+                product_code:
+                  type: string
+                  enum: [portalkos, portalwarga]
+      responses:
+        "201":
+          description: Organization created in policy-dependent status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/InvalidRequest"
+  /organizations/{organization_id}/wallet:
+    get:
+      tags: [Billing]
+      summary: View authorized Kantong balance
+      operationId: getWallet
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+      responses:
+        "200":
+          description: Wallet summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /organizations/{organization_id}/wallet/topups:
+    post:
+      tags: [Billing]
+      summary: Create provider top-up request; no credit until verified settlement
+      operationId: createTopup
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_minor, payment_method]
+              properties:
+                amount_minor:
+                  type: integer
+                  format: int64
+                  minimum: 1
+                  description: IDR whole rupiah, provider/catalog minimum applied server-side
+                payment_method:
+                  type: string
+                  enum: [qris, bank_transfer]
+      responses:
+        "201":
+          description: Top-up pending, never settled by this response alone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /service-orders:
+    post:
+      tags: [Billing]
+      summary: Server-priced order for PortalHub service purchase
+      operationId: createServiceOrder
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [organization_id, items]
+              properties:
+                organization_id:
+                  type: string
+                  format: uuid
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    $ref: "#/components/schemas/ServiceOrderItem"
+      responses:
+        "201":
+          description: Server-priced pending order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /service-orders/{order_id}/checkout:
+    post:
+      tags: [Billing]
+      summary: Checkout by wallet or verified direct provider payment
+      operationId: checkoutServiceOrder
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [payment_choice]
+              properties:
+                payment_choice:
+                  type: string
+                  enum: [wallet, direct_qris, direct_bank_transfer, topup_exact_then_wallet]
+      responses:
+        "202":
+          description: Processing or pending external verification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "200":
+          description: Settled internal wallet debit; entitlement may be fulfilling
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /subscriptions/{subscription_id}/renewal-settings:
+    post:
+      tags: [Billing]
+      summary: Update explicit opt-in renewal settings
+      operationId: setSubscriptionRenewalSettings
+      parameters:
+        - name: subscription_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [auto_renew, accepted_terms_version]
+              properties:
+                auto_renew:
+                  type: boolean
+                  default: false
+                accepted_terms_version:
+                  type: string
+                  minLength: 1
+                funding_choice:
+                  type: string
+                  enum: [wallet]
+                  description: Direct renewal requires separately authorized provider mandate, not presumed
+      responses:
+        "200":
+          description: Renewal preference recorded and audited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /files/upload-intents:
+    post:
+      tags: [Storage]
+      summary: Request scoped private Cloudflare R2 upload intent
+      operationId: createUploadIntent
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadIntentRequest"
+      responses:
+        "201":
+          description: Signed PUT URL short-lived; object not yet ready
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadIntentResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "413":
+          $ref: "#/components/responses/InvalidRequest"
+  /files/{asset_id}/complete:
+    post:
+      tags: [Storage]
+      summary: Finalize upload only after server checks object and queues scan
+      operationId: completeUpload
+      parameters:
+        - $ref: "#/components/parameters/AssetId"
+      responses:
+        "202":
+          description: Scanning pending, not ready to use
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /files/{asset_id}/download:
+    post:
+      tags: [Storage]
+      summary: Request authorized short-lived private R2 download
+      operationId: downloadPrivateFile
+      parameters:
+        - $ref: "#/components/parameters/AssetId"
+      responses:
+        "200":
+          description: Short-lived private S3 signed GET URL (bearer capability)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: no-store
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, data]
+                properties:
+                  ok:
+                    type: boolean
+                    const: true
+                  data:
+                    type: object
+                    required: [url, expires_at]
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+                      expires_at:
+                        type: string
+                        format: date-time
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /public/ads:
+    get:
+      tags: [Ads]
+      security: []
+      summary: List published listing projection only
+      operationId: listPublishedAds
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: city
+          in: query
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Public approved ads; no private resident information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicAdsResponse"
+  /public/ads/{listing_id}:
+    get:
+      tags: [Ads]
+      security: []
+      summary: Get one published public ad
+      operationId: getPublishedAd
+      parameters:
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Public approved ad
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicAdResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /webhooks/payments/{provider}:
+    post:
+      tags: [Billing]
+      security: []
+      summary: Provider callback, authenticated by verified provider signature and event
+      operationId: receivePaymentWebhook
+      description: |
+        Never accept browser session as proof of settlement. Verify provider signature,
+        amount, event identity, order reference, currency and allowed state transitions.
+        The provider-specific header/body schema will be defined after provider selection.
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          description: Accepted for idempotent processing; not proof entitlement was fulfilled
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Supabase access token
+  parameters:
+    OrganizationId:
+      name: organization_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    AssetId:
+      name: asset_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 160
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+    ErrorResponse:
+      type: object
+      required: [ok, error]
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          $ref: "#/components/schemas/Error"
+        meta:
+          type: object
+          properties:
+            request_id:
+              type: string
+    MutationResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          required: [id, status]
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              type: string
+    ContextListResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: array
+          items:
+            type: object
+            required: [organization_id, product_code]
+            properties:
+              organization_id:
+                type: string
+                format: uuid
+              organization_name:
+                type: string
+              product_code:
+                type: string
+              landing_path:
+                type: string
+    OrganizationResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          properties:
+            organization_id:
+              type: string
+              format: uuid
+            verification_status:
+              type: string
+    WalletResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          required: [currency, available_minor]
+          properties:
+            currency:
+              type: string
+              const: IDR
+            available_minor:
+              type: integer
+              format: int64
+            updated_at:
+              type: string
+              format: date-time
+    ServiceOrderItem:
+      type: object
+      required: [product_code, sku, quantity]
+      properties:
+        product_code:
+          type: string
+          enum: [portalwarga, portalkos, portaliklan]
+        sku:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+    ServiceOrderResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          required: [id, status, total_minor, currency]
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              type: string
+            total_minor:
+              type: integer
+              format: int64
+            currency:
+              type: string
+              const: IDR
+    UploadIntentRequest:
+      type: object
+      required: [organization_id, entity_type, entity_id, filename, size_bytes, mime_type]
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+        entity_type:
+          type: string
+          enum: [warga_payment, kos_payment, kos_lease, warga_event, organization_document, ad_listing]
+        entity_id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+          maxLength: 255
+        size_bytes:
+          type: integer
+          minimum: 1
+        mime_type:
+          type: string
+          maxLength: 120
+    UploadIntentResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          required: [asset_id, upload_url, expires_at, status]
+          properties:
+            asset_id:
+              type: string
+              format: uuid
+            upload_url:
+              type: string
+              format: uri
+              description: Bearer capability, never logged or cached
+            expires_at:
+              type: string
+              format: date-time
+            status:
+              type: string
+              const: pending_upload
+    PublicAd:
+      type: object
+      required: [id, title, public_url, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        public_url:
+          type: string
+        status:
+          type: string
+          const: published
+        summary:
+          type: string
+        public_media_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+    PublicAdsResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicAd"
+        meta:
+          type: object
+          properties:
+            next_cursor:
+              type: [string, "null"]
+    PublicAdResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/PublicAd"
+  responses:
+    Unauthorized:
+      description: Not authenticated or invalid provider callback
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Forbidden:
+      description: Insufficient organization, role, product or resource permission
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource missing or hidden by access boundary
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Conflict:
+      description: State conflict or idempotency mismatch
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    InvalidRequest:
+      description: Invalid request, file type or limits
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
