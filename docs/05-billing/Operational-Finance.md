@@ -23,3 +23,8 @@ Tagihan bulanan berdasarkan kontrak; pembayaran partial boleh jika policy diakti
 ## Report verification
 
 Compare transaction sum by account, by method, by period; verify expense reversals, duplicate proof and event transfers. Semua ekspor harus mewarisi scope RBAC yang sama.
+
+
+## Storage bukti transfer — Cloudflare R2
+
+Bukti IPL, sewa dan dana event disimpan **private di Cloudflare R2**. Hubungan ke transaksi, status berkas, ownership, metadata dan audit berada di Supabase PostgreSQL + RLS. Backend memeriksa organisasi, event/property, pemilik dan role sebelum upload/download. Bukti lolos scan (`ready`) bukan berarti transaksi bank diverifikasi: status `verified_internal` membutuhkan otorisasi petugas dan audit terpisah. Jangan expose bukti di iklan/ekspor publik atau cache PWA. [File Storage](../03-data/File-Storage.md).
