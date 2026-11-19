@@ -14,10 +14,10 @@ Semua spesifikasi teknis dan produk PortalHub ada di folder `docs/`.
 
 | Area | Dokumen |
 |---|---|
-| Keputusan | [Decisions](00-product/Decisions.md), [ADR 0001](10-decisions/ADR-0001-modular-monolith.md), [ADR 0002](10-decisions/ADR-0002-wallet.md) |
+| Keputusan | [Decisions](00-product/Decisions.md), [ADR 0001](10-decisions/ADR-0001-modular-monolith.md), [ADR 0002](10-decisions/ADR-0002-wallet.md), **[ADR 0003 — Cloudflare R2](10-decisions/ADR-0003-cloudflare-r2.md)** |
 | Produk & rilis | [MVP and Release](01-product/MVP-and-Release.md) |
 | Arsitektur & migrasi | [Workflows](02-architecture/Workflows.md), [Routing](02-architecture/Routing-Deployment.md), [Legacy Migration](02-architecture/Legacy-Migration.md) |
-| Data | [Data Model](03-data/Data-Model.md), [ERD](03-data/ERD.md) |
+| Data & file storage | [Data Model](03-data/Data-Model.md), [ERD](03-data/ERD.md), **[File Storage (Cloudflare R2)](03-data/File-Storage.md)** |
 | Security | [RBAC](04-security/RBAC.md), [Security & Privacy](04-security/Security-Privacy.md) |
 | Billing | [Kantong & Payments](05-billing/Kantong-and-Payments.md), [Operational Finance](05-billing/Operational-Finance.md) |
 | Produk | [PortalKos](06-products/PortalKos.md), [PortalWarga](06-products/PortalWarga.md), [PortalIklan SEO](06-products/PortalIklan-SEO.md) |
@@ -27,3 +27,6 @@ Semua spesifikasi teknis dan produk PortalHub ada di folder `docs/`.
 | Examples | [Service Order](contracts/service-order.example.json), [Policy Config](examples/policy-config.example.json) |
 
 **Catatan:** rancangan awal; parameter harga, payment provider dan keputusan legal belum final.
+
+
+**Keputusan storage:** Cloudflare R2 untuk objek file privat/publik, Supabase PostgreSQL + RLS untuk metadata/izin. Rujukan: [File-Storage.md](03-data/File-Storage.md) dan [ADR-0003](10-decisions/ADR-0003-cloudflare-r2.md).
