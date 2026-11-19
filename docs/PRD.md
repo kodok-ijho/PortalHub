@@ -111,3 +111,15 @@ Pengurus warga dan pemilik properti sering memakai spreadsheet terpisah untuk ru
 Harga paket, periode trial/gratis, merek/domain final, apakah satu individu tanpa organisasi boleh punya Kantong, detail refund/saldo tidak terpakai, provider QRIS/VA/transfer, legal saldo layanan, retention data, dan aturan verifikasi organisasi warga. **Jangan mengarang nilai default produksi untuk hal ini.**
 ## Autentikasi (keputusan)
 Login utama via Google OAuth menggunakan Supabase Auth. Email OTP/magic link dapat diaktifkan secara configurable. Login tidak otomatis memberikan membership atau akses ke data organisasi; authorization tetap memerlukan membership aktif, product entitlement, scope, dan PostgreSQL RLS.
+
+
+## File storage — Cloudflare R2 (requirement disepakati)
+
+- **STO-001:** Cloudflare R2 menyimpan seluruh file baru: bukti transfer IPL/sewa/event, kontrak, dokumen organisasi, media iklan dan lampiran pembayaran layanan PortalHub.
+- **STO-002:** Supabase Auth tetap mengelola Google Login; Supabase PostgreSQL + RLS menyimpan metadata, org, file links, role, scope, izin dan audit. RLS **tidak otomatis melindungi R2**.
+- **STO-003:** Bucket privat/publik/temp per environment. Bukti dan dokumen privat tidak mendapat public URL; media iklan hanya menjadi publik setelah consent, moderasi, scan dan sanitasi.
+- **STO-004:** Upload via server-authorized intent → presigned PUT R2 S3 API → validasi server/scan → metadata ready; private download sesudah cek izin dengan short-lived signed GET/proxy. Kuota dan cleanup upload orphan wajib.
+- **STO-005:** Backup file R2 dan metadata PostgreSQL secara terpisah serta latihan restore bersama. Penentuan kapasitas paket, retensi, dan legal hold masih perlu validasi.
+- **STO-006:** Status file siap tidak mengubah pembayaran IPL/sewa menjadi bank-settled; verifikasi keuangan tetap internal.
+
+**Acceptance:** uji isolasi tenant/event/property, MIME/size/malware, quota race, signed URL expiry, no public-leak, retention, restore dan biaya. [File Storage](03-data/File-Storage.md).
