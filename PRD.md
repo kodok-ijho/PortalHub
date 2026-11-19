@@ -109,3 +109,5 @@ Pengurus warga dan pemilik properti sering memakai spreadsheet terpisah untuk ru
 ## 8. Masih perlu validasi
 
 Harga paket, periode trial/gratis, merek/domain final, apakah satu individu tanpa organisasi boleh punya Kantong, detail refund/saldo tidak terpakai, provider QRIS/VA/transfer, legal saldo layanan, retention data, dan aturan verifikasi organisasi warga. **Jangan mengarang nilai default produksi untuk hal ini.**
+## Autentikasi (keputusan)
+Login utama via Google OAuth menggunakan Supabase Auth. Email OTP/magic link dapat diaktifkan secara configurable. Login tidak otomatis memberikan membership atau akses ke data organisasi; authorization tetap memerlukan membership aktif, product entitlement, scope, dan PostgreSQL RLS.
