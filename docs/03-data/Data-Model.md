@@ -56,3 +56,17 @@ RLS policy should call vetted security functions to check active membership, org
 ## Naming tradeoff
 
 `warga_houses` intentionally distinct from `kos_units`. Event and property assignments separate or generic scope with validated references; avoid polymorphic FK without database constraints for sensitive access.
+
+
+## Cloudflare R2 file metadata (accepted design)
+
+**Cloudflare R2** menyimpan byte file, sedangkan **Supabase PostgreSQL + RLS** menyimpan metadata dan permission. RLS tidak melindungi object R2 secara otomatis.
+
+- `file_assets`: `id uuid`, `organization_id`, `bucket_name`, `object_key`, `original_filename`, `mime_type`, `size_bytes`, `checksum_sha256`, `classification`, `visibility`, `status`, `uploaded_by`, `retention_policy_key`, `created_at`, `deleted_at`. Unique object locator (bucket + key).
+- `file_links`: file-to-payment/lease/event/house/listing; enforce allowed entity types, same-org and resource scope using checked FKs/service constraints.
+- `file_upload_intents`: expected type/size, reservation quota, expiry, idempotency. **Jangan simpan presigned URL** dalam DB.
+- `file_access_audit`: actor, file, action, timestamp, request_id, tidak menyimpan token URL; `file_versions` untuk revisi bila perlu.
+- Status `pending_upload → uploaded → scanning → ready` atau `rejected/quarantined/deleted`. Signed private download diterbitkan backend hanya setelah check status ready, product entitlement, org+resource permission.
+- Quota dihitung dari size server-verified ditambah reserved bytes untuk mencegah upload paralel bypass limit. Public ads hanya dari approved published projection dengan sanitized media.
+
+Lihat [File-Storage.md](File-Storage.md) untuk bucket, upload lifecycle, retention, backup dan tests.
