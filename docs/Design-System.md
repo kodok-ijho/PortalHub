@@ -84,3 +84,9 @@ Gunakan Bahasa Indonesia yang jelas, contoh: “Pembayaran dicatat dan menunggu 
 ## Definition of done UI
 
 Responsif diuji pada lebar 320, 375, 768, 1024, 1440; tidak ada horizontal scroll tak sengaja; form keyboard accessible; error loading/empty/offline; unit dan role diuji; audit visual manual dan Lighthouse diperiksa di CI bila memungkinkan.
+
+## Pengalaman upload file Cloudflare R2
+
+Komponen `EvidenceUploader`, `DocumentUploader`, `PrivateFilePreview`, `UploadProgress`, `FileStatusBadge` memakai API upload intent dan status file, bukan R2 credentials di frontend. UI perlu status `menyiapkan`, `mengunggah`, `sedang diperiksa`, `siap`, `ditolak`, `gagal/coba lagi`; progress accessible, pilihan file/ukuran jelas, retry/cancel.
+
+`Upload complete` **bukan** `file ready`; `file ready` **bukan** `pembayaran bank verified`. File privat di-preview via signed GET setelah cek izin dan tidak masuk offline PWA. Foto publik ditampilkan hanya jika pemilik menyetujui dan moderasi berhasil. Lihat [File Storage](03-data/File-Storage.md).
