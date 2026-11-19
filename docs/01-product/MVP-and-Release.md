@@ -2,7 +2,7 @@
 
 ## MVP 0: SaaS core + PortalKos private
 
-P0: auth multi-org, membership + roles, configurable onboarding basic, properties/units/leases, catat pembayaran cash/transfer, owner dashboard, subscription order + direct QRIS/transfer, Kantong top-up/debit, audit dan RLS. Subscription baru aktif setelah provider settled.
+P0: auth multi-org, membership + roles, configurable onboarding basic, properties/units/leases, catat pembayaran cash/transfer, owner dashboard, subscription order + direct QRIS/transfer, Kantong top-up/debit, audit dan RLS. Subscription baru aktif setelah **pembayaran direct terkonfirmasi settled oleh provider ATAU debit Kantong yang saldonya sudah settled berhasil secara atomik**; aktivasi idempotent. Pembelian dengan saldo Kantong tidak memerlukan webhook provider baru.
 
 ## MVP 1: PortalIklan publik
 
@@ -38,3 +38,8 @@ Escrow, payment gateway untuk sewa/IPL, dompet transfer P2P, mobile native, book
 Sebelum mengaktifkan unggahan bukti transfer/kontrak/dokumen, wajib ada R2 private/temp bucket terisolasi per environment, backend API otorisasi signed PUT/GET, tabel `file_assets`/RLS, scan/quarantine, kuota, cleanup orphan dan backup restore DB+R2. Media iklan publik punya bucket dan moderation tersendiri.
 
 Gate produksi: negative tests lintas org/property/event, presigned URL expiry, file MIME/size/malware, public-leak, quota racing, retention & restore berhasil. Lihat [File Storage](../03-data/File-Storage.md).
+
+
+## Implementation dependency gates (audit follow-up)
+
+Fase auth/tenancy memerlukan [Auth & SSO](../04-security/Auth-and-SSO.md), [Permission Matrix](../04-security/Permission-Matrix.md), [RLS Policy Spec](../04-security/RLS-Policy-Spec.md) dan [Database Schema](../03-data/Database-Schema.md). Billing harus mengikuti [Subscription Lifecycle](../05-billing/Subscription-Lifecycle.md) dan [Payment State Machines](../05-billing/Payment-and-Wallet-State-Machines.md) sebelum live checkout. Fase produk mengacu ke rules PortalKos, Warga Finance, Ads Publishing, serta [Requirements Traceability](../09-delivery/Requirements-Traceability.md). Semua masih rancangan sampai ada implementasi/tes nyata.

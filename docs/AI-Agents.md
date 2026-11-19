@@ -4,9 +4,9 @@
 
 ## Context wajib dibaca
 
-1. `README.md`, `PRD.md`, `Design-System.md`, `Architecture.md`.
-2. `04-security/RBAC.md`, `05-billing/Kantong-and-Payments.md`, `03-data/Data-Model.md`.
-3. ADR terkait, file test, dan source yang sedang diubah; cek ulang dokumentasi legacy bila menyentuh PortalWarga.
+1. `README.md` dan `AGENTS.md` di root; `docs/PRD.md`, `docs/Design-System.md`, `docs/Architecture.md`.
+2. `docs/04-security/Permission-Matrix.md`, `docs/04-security/RLS-Policy-Spec.md`, `docs/05-billing/Payment-and-Wallet-State-Machines.md`, `docs/03-data/Database-Schema.md`.
+3. [Indeks dokumentasi](README.md), [Requirements Traceability](09-delivery/Requirements-Traceability.md), ADR terkait dan source/test yang sedang diubah; baca dokumentasi legacy jika menyentuh migrasi PortalWarga.
 
 ## Golden rules
 
@@ -105,3 +105,13 @@ Per task: tentukan domain, requirement ID, data exposure, authorization scope, s
 - Media iklan hanya menjadi publik setelah consent + moderasi + sanitasi EXIF; URL file privat jangan masuk HTML publik, sitemap, telemetry atau PWA offline cache.
 - Buat storage adapter, metadata `file_assets` + RLS, tests negatif lintas tenant/property/event, backup R2 terpisah dari DB, lifecycle dan audit.
 - Baca [File-Storage.md](03-data/File-Storage.md) dan [ADR-0003](10-decisions/ADR-0003-cloudflare-r2.md) sebelum membuat modul dokumen atau media.
+
+
+## Checklist terbaru: perbaikan audit dan source-of-truth
+
+- Akses keuangan event tidak otomatis untuk owner organisasi: perlu role grant scoped yang eksplisit sesuai [Permission Matrix](04-security/Permission-Matrix.md).
+- Spec database terinci ada di [Database Schema](03-data/Database-Schema.md); existing Data-Model.md/ERD.md bersifat konseptual. Jangan anggap pseudocode sebagai migrations siap deploy.
+- State subscription dan payment harus mengikuti [Subscription Lifecycle](05-billing/Subscription-Lifecycle.md) serta [Payment State Machines](05-billing/Payment-and-Wallet-State-Machines.md). Wallet purchase tidak menunggu webhook baru setelah saldo settled dan debit atomik berhasil.
+- API machine-readable yang tersedia adalah **draft** [OpenAPI.yaml](08-operations/OpenAPI.yaml), bukan janji endpoint berjalan. Tambahkan schema & contract tests saat coding.
+- Semua tugas harus mengisi [Requirements Traceability](09-delivery/Requirements-Traceability.md). Jangan mengubah status implemented/tested tanpa bukti commit/CI.
+- **Kecualikan setup dan nilai credential** dari dokumentasi ini; jangan meminta/menuliskan secret, token, key atau password.

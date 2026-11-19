@@ -137,3 +137,12 @@ Logical buckets per environment: `portalhub-{env}-private` untuk bukti pembayara
 File upload dianggap siap hanya setelah backend HEAD, verifikasi tipe/ukuran, scanner, dan metadata ready. Foto iklan publik diterbitkan sebagai derivatif yang telah disanitasi dan diizinkan. File privat serta signed URL tidak disimpan di cache PWA. Database backup **tidak** membackup objek R2: lakukan backup dan restore keduanya.
 
 Spesifikasi lengkap: [File-Storage.md](03-data/File-Storage.md), [ADR-0003](10-decisions/ADR-0003-cloudflare-r2.md). Jangan mengadopsi Supabase Storage untuk file baru tanpa ADR revisi; file legacy dapat dimigrasi secara terkendali.
+
+
+## Kontrak desain implementasi pasca-audit
+
+- **Identity & SSO:** [Auth-and-SSO.md](04-security/Auth-and-SSO.md); satu user Supabase, Google OAuth utama, membership dan context selector.
+- **Authorization:** [Permission Matrix](04-security/Permission-Matrix.md), [RLS Policy Spec](04-security/RLS-Policy-Spec.md). Scope event/property harus eksplisit, org owner tidak otomatis mengakses kas event.
+- **Data:** [Database Schema](03-data/Database-Schema.md) merinci blueprint physical migrations dan state; original [Data Model](03-data/Data-Model.md) tetap logis. Kolom tenant kanonik `organization_id`.
+- **Billing:** [Payment State Machines](05-billing/Payment-and-Wallet-State-Machines.md) dan [Subscription Lifecycle](05-billing/Subscription-Lifecycle.md) membedakan wallet debit dan direct provider settlement; keduanya bisa mengaktifkan layanan secara idempotent.
+- **Integrations:** [Notifications & Jobs](02-architecture/Notifications-and-Jobs.md), [OpenAPI Draft](08-operations/OpenAPI.yaml), [Disaster Recovery](08-operations/Disaster-Recovery.md). Tidak ada klaim resource/runtime sudah ter-deploy.

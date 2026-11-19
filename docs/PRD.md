@@ -109,11 +109,11 @@ Pengurus warga dan pemilik properti sering memakai spreadsheet terpisah untuk ru
 ## 8. Masih perlu validasi
 
 Harga paket, periode trial/gratis, merek/domain final, apakah satu individu tanpa organisasi boleh punya Kantong, detail refund/saldo tidak terpakai, provider QRIS/VA/transfer, legal saldo layanan, retention data, dan aturan verifikasi organisasi warga. **Jangan mengarang nilai default produksi untuk hal ini.**
-## Autentikasi (keputusan)
+## 9. Autentikasi (keputusan)
 Login utama via Google OAuth menggunakan Supabase Auth. Email OTP/magic link dapat diaktifkan secara configurable. Login tidak otomatis memberikan membership atau akses ke data organisasi; authorization tetap memerlukan membership aktif, product entitlement, scope, dan PostgreSQL RLS.
 
 
-## File storage — Cloudflare R2 (requirement disepakati)
+## 10. File storage — Cloudflare R2 (requirement disepakati)
 
 - **STO-001:** Cloudflare R2 menyimpan seluruh file baru: bukti transfer IPL/sewa/event, kontrak, dokumen organisasi, media iklan dan lampiran pembayaran layanan PortalHub.
 - **STO-002:** Supabase Auth tetap mengelola Google Login; Supabase PostgreSQL + RLS menyimpan metadata, org, file links, role, scope, izin dan audit. RLS **tidak otomatis melindungi R2**.
@@ -123,3 +123,8 @@ Login utama via Google OAuth menggunakan Supabase Auth. Email OTP/magic link dap
 - **STO-006:** Status file siap tidak mengubah pembayaran IPL/sewa menjadi bank-settled; verifikasi keuangan tetap internal.
 
 **Acceptance:** uji isolasi tenant/event/property, MIME/size/malware, quota race, signed URL expiry, no public-leak, retention, restore dan biaya. [File Storage](03-data/File-Storage.md).
+
+
+## 11. Implementation reference & open decisions
+
+Sumber detail pelaksanaan yang berkaitan langsung: [Auth & SSO](04-security/Auth-and-SSO.md), [Permission Matrix](04-security/Permission-Matrix.md), [RLS Policy Spec](04-security/RLS-Policy-Spec.md), [Database Schema](03-data/Database-Schema.md), [Subscription Lifecycle](05-billing/Subscription-Lifecycle.md), [Payment State Machines](05-billing/Payment-and-Wallet-State-Machines.md), [PortalKos Rules](06-products/PortalKos-Business-Rules.md), [PortalWarga Finance Rules](06-products/PortalWarga-Finance-Rules.md), [PortalIklan Publishing Rules](06-products/PortalIklan-Publishing-Rules.md), [Draft OpenAPI](08-operations/OpenAPI.yaml), dan [Traceability](09-delivery/Requirements-Traceability.md). Dokumen ini menetapkan kebutuhan; parameter harga/provider, retensi, SLA serta fitur yang berstatus TBD tidak boleh ditafsirkan sebagai keputusan produksi.

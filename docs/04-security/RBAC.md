@@ -29,8 +29,8 @@ Organization owner tidak otomatis menjadi bendahara event; product-role assignme
 | `kos.lease.read_own` | — | — | — | — | ✓ |
 | `warga.ipl.record` | ✓ | by grant | ✓ | by grant | — |
 | `warga.ipl.verify` | ✓ | by grant | ✓ | — | — |
-| `warga.event.finance.read` | ✓ | by grant | all assigned | assigned event | — |
-| `warga.event.finance.write` | ✓ | by grant | all assigned | event treasurer only | — |
+| `warga.event.finance.read` | **explicit event grant required** | explicit scope grant | assigned events only | assigned event | — |
+| `warga.event.finance.write` | **explicit event grant required** | explicit scope grant | assigned event(s) by grant | event treasurer only | — |
 | `ads.listing.publish` | ✓ | by grant | — | source approved | own listing, subject moderation |
 
 ✓ tetap bersyarat domain/org/scope. Detail custom role UI paska MVP; platform security hard requirements tidak dapat dicabut.
@@ -55,3 +55,8 @@ Permission: `file.upload`, `file.view`, `file.remove`, `file.publish_public`, `f
 Tenant hanya akses bukti/kontrak sendiri; staff Kos A tidak bisa mengakses file Kos B; panitia event A tidak bisa membuka event B. Public visitor hanya melihat media iklan hasil moderasi, bukan file privat. Setelah revoke role backend tidak memberi URL baru; signed URL lama mungkin tetap aktif sampai expiry, sehingga TTL harus singkat.
 
 Referensi: [File-Storage.md](../03-data/File-Storage.md).
+
+
+## Resolusi matriks event finance (audit 19-11-2026)
+
+Tanda ✓ pada kolom Owner untuk akses finance event **tidak berlaku** tanpa role assignment ke event yang bersangkutan. Pembacaan/pencatatan kas event mensyaratkan grant per event atau grant treasury organisasi yang **secara eksplisit** mengizinkan cakupan event tersebut; pemilik organisasi, ketua event, atau bendahara kas umum tidak otomatis mendapat seluruh keuangan event. Verifikasi harus dilakukan di server dan RLS. Matriks lebih detail: [Permission Matrix](Permission-Matrix.md), [RLS Policy Spec](RLS-Policy-Spec.md).

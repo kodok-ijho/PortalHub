@@ -70,3 +70,8 @@ RLS policy should call vetted security functions to check active membership, org
 - Quota dihitung dari size server-verified ditambah reserved bytes untuk mencegah upload paralel bypass limit. Public ads hanya dari approved published projection dengan sanitized media.
 
 Lihat [File-Storage.md](File-Storage.md) untuk bucket, upload lifecycle, retention, backup dan tests.
+
+
+## Source-of-truth untuk implementasi database
+
+Dokumen ini adalah **logical model**. Rancangan tipe/constraint, migrasi dan identitas `organization_id` dibahas di [Database-Schema.md](Database-Schema.md); policy akses rinci di [RLS-Policy-Spec.md](../04-security/RLS-Policy-Spec.md). Sebutan `org_id` pada model lama adalah singkatan untuk `organization_id` yang dituju, bukan kolom duplikat. Nominal IDR saat ini memakai `amount_minor bigint` untuk **rupiah utuh** (tidak ada pecahan sen). SQL migrations belum dibuat.
