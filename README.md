@@ -32,13 +32,16 @@ flowchart TB
     I --> D
     B --> D
     B --> P["Payment provider: QRIS / transfer untuk layanan PortalHub"]
+    W --> R2["Cloudflare R2: private files & public media"]
+    K --> R2
+    I --> R2
 ```
 
 **Arah teknis (rancangan, belum diimplementasikan):**
 
 - **Aplikasi privat / PWA:** React, Vite, Tailwind CSS; desktop menampilkan informasi lebih lengkap, mobile lebih ringkas dan informatif.
 - **PortalIklan publik:** frontend berkemampuan SSR/SSG seperti Next.js untuk halaman yang dapat diindeks mesin pencari.
-- **Backend:** Supabase Auth, PostgreSQL dengan RLS, Storage, serta endpoint server tepercaya untuk transaksi sensitif.
+- **Backend & data:** Supabase Auth (Google OAuth), Supabase PostgreSQL + RLS untuk database dan metadata file, **Cloudflare R2** untuk file, serta API server untuk otorisasi, upload dan transaksi sensitif.
 - **Arsitektur:** modular monolith dengan domain terpisah, satu identitas bersama, dan pemisahan akses per organisasi.
 - **Hosting target:** Vercel; integrasi penyedia pembayaran dan detail produksi **belum ditetapkan**.
 
@@ -106,6 +109,14 @@ Contoh domain target pengembangan: `https://portalhub.vercel.app`. Semua path di
 
 Lihat [Design System](docs/Design-System.md), [Routing & Deployment](docs/02-architecture/Routing-Deployment.md), dan [Routes & Journeys](docs/07-ux/Routes-and-Journeys.md).
 
+## Cloudflare R2 — Bukti transfer, dokumen, dan media iklan
+
+**Keputusan penyimpanan:** seluruh file baru PortalHub menggunakan Cloudflare R2. File privat seperti bukti transfer IPL/sewa/event, kontrak, surat dan dokumen organisasi ditempatkan di bucket **private**. Foto iklan yang telah memperoleh izin dan lolos moderasi disajikan dari bucket **public**; unggahan belum tervalidasi ada di bucket **temp**. Setiap environment memakai bucket dan secret terpisah.
+
+Supabase **tidak menyimpan byte file**: Supabase Auth mengelola login, PostgreSQL + RLS menyimpan metadata dan izin. RLS **tidak otomatis berlaku untuk object R2**, sehingga API selalu memeriksa organisasi, produk, role, dan scope sebelum menerbitkan presigned URL. Credential R2 hanya di backend. Backup file dan database perlu diuji secara bersamaan.
+
+Baca [File-Storage.md](docs/03-data/File-Storage.md) dan [ADR-0003 — Cloudflare R2](docs/10-decisions/ADR-0003-cloudflare-r2.md).
+
 ## Dokumentasi pengembangan
 
 | Area | Dokumen |
@@ -117,7 +128,7 @@ Lihat [Design System](docs/Design-System.md), [Routing & Deployment](docs/02-arc
 | Aturan untuk AI coding agent | [AI-Agents.md](docs/AI-Agents.md) |
 | Keputusan produk | [Decisions.md](docs/00-product/Decisions.md) |
 | Lingkup MVP dan rilis | [MVP-and-Release.md](docs/01-product/MVP-and-Release.md) |
-| ERD & model database | [ERD.md](docs/03-data/ERD.md) · [Data-Model.md](docs/03-data/Data-Model.md) |
+| ERD, model data & Cloudflare R2 | [ERD.md](docs/03-data/ERD.md) · [Data-Model.md](docs/03-data/Data-Model.md) · [File-Storage.md](docs/03-data/File-Storage.md) |
 | Hak akses & privasi | [RBAC.md](docs/04-security/RBAC.md) · [Security-Privacy.md](docs/04-security/Security-Privacy.md) |
 | Pembayaran & pelaporan operasional | [Kantong-and-Payments.md](docs/05-billing/Kantong-and-Payments.md) · [Operational-Finance.md](docs/05-billing/Operational-Finance.md) |
 | Spesifikasi produk | [PortalKos](docs/06-products/PortalKos.md) · [PortalWarga](docs/06-products/PortalWarga.md) · [PortalIklan & SEO](docs/06-products/PortalIklan-SEO.md) |
@@ -125,7 +136,7 @@ Lihat [Design System](docs/Design-System.md), [Routing & Deployment](docs/02-arc
 | API & operasional | [API-Contract.md](docs/08-operations/API-Contract.md) · [DevOps-Runbook.md](docs/08-operations/DevOps-Runbook.md) |
 | Tahapan implementasi & pengujian | [Roadmap.md](docs/09-delivery/Roadmap.md) · [Test-Plan.md](docs/09-delivery/Test-Plan.md) |
 | Migrasi dari PortalWarga sebelumnya | [Legacy-Migration.md](docs/02-architecture/Legacy-Migration.md) |
-| Catatan keputusan arsitektur | [ADR-0001](docs/10-decisions/ADR-0001-modular-monolith.md) · [ADR-0002](docs/10-decisions/ADR-0002-wallet.md) |
+| Catatan keputusan arsitektur | [ADR-0001](docs/10-decisions/ADR-0001-modular-monolith.md) · [ADR-0002](docs/10-decisions/ADR-0002-wallet.md) · [ADR-0003 R2](docs/10-decisions/ADR-0003-cloudflare-r2.md) |
 
 ## Struktur repository saat ini
 
@@ -142,7 +153,7 @@ PortalHub/
     ├── 00-product/
     ├── 01-product/
     ├── 02-architecture/
-    ├── 03-data/
+    ├── 03-data/            # Termasuk File-Storage.md (Cloudflare R2)
     ├── 04-security/
     ├── 05-billing/
     ├── 06-products/
@@ -173,12 +184,3 @@ Setiap perubahan implementasi harus mengacu pada [Roadmap](docs/09-delivery/Road
 **Referensi kode yang sudah ada:** [kodok-ijho/PortalWarga](https://github.com/kodok-ijho/PortalWarga). Repository tersebut merupakan **legacy/reference** untuk evaluasi reuse; jangan menganggap seluruh implementasinya otomatis memenuhi arsitektur multi-tenant PortalHub.
 
 **Lisensi:** belum ditetapkan dalam repository ini; penetapan lisensi dan hak penggunaan ulang kode harus diselesaikan sebelum distribusi yang membutuhkan izin eksplisit.
-
-
-## Cloudflare R2 — Bukti transfer, dokumen, dan media iklan
-
-**Keputusan penyimpanan:** seluruh file baru PortalHub menggunakan Cloudflare R2. File privat seperti bukti transfer IPL/sewa/event, kontrak, surat dan dokumen organisasi ditempatkan di bucket **private**. Foto iklan yang telah memperoleh izin dan lolos moderasi disajikan dari bucket **public**; unggahan belum tervalidasi ada di bucket **temp**. Setiap environment memakai bucket dan secret terpisah.
-
-Supabase **tidak menyimpan byte file**: Supabase Auth mengelola login, PostgreSQL + RLS menyimpan metadata dan izin. RLS **tidak otomatis berlaku untuk object R2**, sehingga API selalu memeriksa organisasi, produk, role, dan scope sebelum menerbitkan presigned URL. Credential R2 hanya di backend. Backup file dan database perlu diuji secara bersamaan.
-
-Baca [File-Storage.md](docs/03-data/File-Storage.md) dan [ADR-0003 — Cloudflare R2](docs/10-decisions/ADR-0003-cloudflare-r2.md).
