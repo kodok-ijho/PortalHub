@@ -41,3 +41,18 @@ Error: `{ "ok": false, "data": null, "error": {"code":"FORBIDDEN","message":"Tid
 - Use pagination, stable cursor, validation and rate limits; private endpoints no-cache.
 
 Full OpenAPI schema is a **future implementation deliverable**, not falsely represented as complete here.
+
+
+## Cloudflare R2 — API contract file (design, belum implementasi)
+
+| Method | Route | Kewajiban server |
+|---|---|---|
+| POST | `/files/upload-intents` | Supabase Auth + org/product/resource permission; quota reserve; return `asset_id` + presigned R2 S3 PUT TTL pendek |
+| POST | `/files/:assetId/complete` | Verify actor, R2 object HEAD, actual size/type, enqueue scan; idempotent |
+| GET | `/files/:assetId` | Metadata setelah PostgreSQL RLS + backend authorization |
+| POST | `/files/:assetId/download` | Private file `ready`, permission rechecked; presigned R2 S3 GET TTL pendek atau authenticated proxy |
+| POST | `/files/:assetId/publish` | Listing owner consent+moderation+scan; sanitasi derivative ke R2 public |
+| DELETE | `/files/:assetId` | Permission, retention/legal hold, soft-delete & asynchronous object removal |
+| GET | `/organizations/:id/storage-usage` | Owner/billing manager, quota used/reserved per kategori |
+
+Prefix versi `/api/v1`, request-id dan idempotency untuk upload; error `INVALID_FILE_TYPE`, `FILE_TOO_LARGE`, `FILE_NOT_READY`, `STORAGE_QUOTA_EXCEEDED`, `FILE_QUARANTINED`. Client tidak boleh memilih bucket/key atau mengirim credential R2. RLS **hanya berlaku di database**; permission untuk signed URL dievaluasi server. Presigned S3 tidak berlaku pada custom domain CDN. [File Storage](../03-data/File-Storage.md).
