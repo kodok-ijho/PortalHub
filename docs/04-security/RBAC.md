@@ -46,3 +46,12 @@ Policy resolution: platform mandatory guardrails > authorized org override > pro
 ## Negative tests
 
 User A org X reads org Y finance → 403/empty; Kos A staff reads Kos B lease via forged UUID → 403; event treasurer A sees event B → 403; tenant sees others' invoices → 403; public sees draft ad → 404; user forges `role` or `org_id` in request → forbidden.
+
+
+## File permissions (Cloudflare R2)
+
+Permission: `file.upload`, `file.view`, `file.remove`, `file.publish_public`, `file.audit`. Selalu mensyaratkan active org membership, product entitlement, role grant, dan **resource scope** yang benar. Backend memvalidasi metadata Supabase + relationship ke payment, lease, house, event atau listing sebelum mengeluarkan R2 signed URL. **RLS tidak otomatis berlaku ke object R2.**
+
+Tenant hanya akses bukti/kontrak sendiri; staff Kos A tidak bisa mengakses file Kos B; panitia event A tidak bisa membuka event B. Public visitor hanya melihat media iklan hasil moderasi, bukan file privat. Setelah revoke role backend tidak memberi URL baru; signed URL lama mungkin tetap aktif sampai expiry, sehingga TTL harus singkat.
+
+Referensi: [File-Storage.md](../03-data/File-Storage.md).
