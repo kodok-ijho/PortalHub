@@ -27,3 +27,15 @@ Milestones are **ordered dependencies**, not promised calendar dates. Estimate a
 - LEGACY-001 migration inventory & mapping, payment flow impact.
 
 Every ticket needs acceptance criteria, tests, DB migration and permission checks. User-visible flags off until authorized release.
+
+
+## Cloudflare R2 — additional P0 backlog
+
+- **STO-001:** Provision private/temp/public buckets per env, least-privilege R2 credentials, browser CORS dan monitoring biaya.
+- **STO-002:** Buat `file_assets`, `file_links`, `file_upload_intents`, RLS metadata, quota reservation dan audit.
+- **STO-003:** Backend storage adapter, presigned PUT/GET, upload complete, HEAD, MIME/size/scanning, retry dan orphan cleanup.
+- **STO-004:** Integrasi lampiran bukti transfer/kontrak/doc Warga & Kos, per-event/per-property scope dan status upload terpisah dari verifikasi pembayaran.
+- **STO-005:** Media publik PortalIklan: consent, moderation, EXIF scrub, public R2 derivative, CDN caching & takedown.
+- **STO-006:** Backup object R2 + DB restore bersama; security tests unauthorized access, quotas, malware dan expiry.
+
+**Release gate:** private object tidak dapat diakses pengguna tidak berhak, public listing tidak membocorkan draft/private, biaya/retensi/backup diketahui dan teruji. [File Storage](../03-data/File-Storage.md).
