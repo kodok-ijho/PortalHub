@@ -29,3 +29,8 @@ Duplicate checks, spam reporting, restricted/prohibited categories according to 
 ## Growth metrics
 
 Search impressions/clicks from verified analytics, organic landing pages, listing conversion/contact CTR, time-to-fill vacant units, active listings, rejection rates, ad expiry retention.
+
+
+## Cloudflare R2 public listing media
+
+Foto iklan masuk bucket private/temp R2 hingga diverifikasi ukuran/MIME, scan, consent dan moderasi. Hanya gambar derivatif yang disanitasi (EXIF lokasi dihapus) yang diterbitkan ke **public R2 bucket**. URL publik memakai custom CDN domain Cloudflare saat tersedia; jangan embed signed private URL pada HTML SSR, sitemap, metadata OG atau structured data. Saat listing berakhir/unpublish, jalankan takedown & cache invalidation; foto publik dengan key berversi dan alt text yang tepat. Kuota & pemrosesan gambar dipantau. [File Storage](../03-data/File-Storage.md).
