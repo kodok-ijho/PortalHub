@@ -76,3 +76,23 @@ flowchart TD
 ## Event account transfer
 
 Kas utama --debit transfer--> clearing internal --credit transfer--> kas event. Dua baris yang dipautkan `transfer_id`; dikecualikan dari pendapatan/beban konsolidasi. Semua event reports event_id scoped.
+
+
+## Flow file upload — Cloudflare R2
+
+```mermaid
+flowchart TD
+ A[Supabase Auth / login Google] --> B[Request upload intent]
+ B --> C{Backend: membership, scope, type, quota}
+ C -->|Tidak| X[Tolak]
+ C -->|Ya| D[Create pending asset + presigned R2 PUT]
+ D --> E[Browser PUT ke R2 private/temp]
+ E --> F[Server HEAD, verify MIME/size, malware scan]
+ F -->|Rejected| R[Quarantine dan cleanup]
+ F -->|Ready| G[Link asset ke payment/lease/event]
+ G --> H{Tujuan file}
+ H -->|Privat| I[Download setelah cek izin + signed GET]
+ H -->|Iklan dengan consent| J[Review, scrub EXIF, public R2 derivative]
+```
+
+**RLS hanya pada metadata Supabase, bukan object R2.** Status file `ready` tidak mengesahkan dana bank. Detail [File Storage](../03-data/File-Storage.md).
