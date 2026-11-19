@@ -23,3 +23,10 @@ Billing owner opens `/app/subscription` → selects package and period → choos
 ## Journey sample: publishing ads
 
 Owner marks unit vacant and opts in → selects which info may be public → preview → moderation → published SEO link. Listing expires on schedule, may renew via package/wallet/direct payment; occupancy invalidates available claim.
+
+
+## Journey: unggah bukti transfer atau dokumen
+
+Warga/penyewa login Google → pilih pembayaran/kontrak/event yang berhak diakses → API authorize dan reservasi kuota → short-lived presigned PUT R2 → browser upload → server memeriksa file dan scan → tampil status `ready` atau `ditolak` → bendahara memverifikasi **pembayaran** pada langkah terpisah.
+
+Download privat memperoleh signed GET baru setelah API mengulang check permission. Browser tidak menyimpan file/URL sensitif dalam cache offline. Foto iklan publik hanya setelah owner opt-in dan moderasi. [File Storage](../03-data/File-Storage.md).
