@@ -124,3 +124,5 @@ Mulai dengan monorepo satu codebase. Vercel rewrite dapat memetakan `/iklan/*` k
 ## 10. Non-functional decisions requiring validation
 
 Provider payment terpilih, policy Kantong/uang prabayar, komponen SSR final, throughput queue, SLA, data residency, dan personal-data compliance perlu keputusan tersendiri. Lihat `docs/10-decisions`.
+## Authentication vs Authorization
+Supabase Auth menangani login dengan Google OAuth sebagai metode default; alternatif email OTP/magic link boleh diaktifkan lewat konfigurasi. Setelah login, backend mengecek identitas, membership organisasi, role, resource scope, product entitlements, dan kebijakan. Supabase PostgreSQL Row Level Security (RLS) menegakkan batasan akses data, bukan mekanisme login. Jangan percaya organization_id atau role dari client. Atur callback/redirect allowlist Google OAuth dan Supabase untuk domain Vercel, staging dan produksi secara ketat.
