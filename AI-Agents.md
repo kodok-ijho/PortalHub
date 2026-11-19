@@ -89,3 +89,8 @@ Per task: tentukan domain, requirement ID, data exposure, authorization scope, s
 - Show private residents/tenants info on public ad detail.
 - Allow staff assigned only to Kos A to read Kos B via crafted UUID.
 - Treat QRIS in legacy PortalWarga as approved for IPL settlement in PortalHub.
+## Aturan autentikasi dan izin
+- Gunakan Supabase Auth dengan Google OAuth sebagai metode login utama, opsi email OTP/magic link configurable.
+- Google OAuth adalah authentication; Supabase PostgreSQL RLS adalah authorization pada data. Jangan menyamakan keduanya.
+- User yang sukses login belum tentu menjadi anggota organisasi; cek membership aktif, product entitlement, role, scope dan RLS. Default deny.
+- Jangan menaruh service_role di frontend atau melemahkan RLS untuk mengejar kemudahan login.
