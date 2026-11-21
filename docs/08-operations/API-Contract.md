@@ -61,3 +61,7 @@ Prefix versi `/api/v1`, request-id dan idempotency untuk upload; error `INVALID_
 ## Contract-first implementation checklist
 
 [Draft OpenAPI 3.1](OpenAPI.yaml) memetakan onboarding, contexts, wallet, service orders/checkout, subscription renewals, public ads dan file R2. Tambahkan endpoint Kos/Warga detail dan provider-specific webhook schema setelah perancangan domain disetujui. CI harus memvalidasi spec YAML/OpenAPI, compatibility, response envelope/error semantics dan negative authorization tests. Jangan klaim endpoint deployed hanya karena spec tersedia.
+
+## Coverage audit dan perluasan 21 November 2026
+
+Lihat [API-Coverage.md](API-Coverage.md) untuk matriks gap per domain dan urutan perluasan kontrak. `OpenAPI.yaml` sekarang memiliki rancangan tambahan untuk organization membership/invitations, Kantong ledger, property listing/create, external Kos payment record/verify, event-scoped finance/transaksi Warga, Ads publish, serta metadata/delete/usage R2. Sebagian besar CRUD domain, lifecycle, webhooks provider-specific, consent, dan policy-driven states **tetap memerlukan kontrak detail per tiket sebelum UI/backend mengintegrasikan**. Kode belum ada; tidak boleh menganggap penambahan path sebagai implementasi.

@@ -98,4 +98,4 @@ Kumpulkan isu sejenis dalam satu review batch. **Tidak ada batas waktu yang meny
 
 Tugas baru boleh dinyatakan selesai bila memenuhi [`AGENT-TASK-CONTRACT.md`](AGENT-TASK-CONTRACT.md): PR yang bisa direview, pemeriksaan relevan lulus, evidence terhadap acceptance criteria, tidak ada kebocoran lintas tenant, migrasi/rollback terdokumentasi, serta traceability diperbarui sesuai mekanisme integrasi. Label `blocked` atau `partial` wajib digunakan bila feature flag tetap off atau persetujuan belum didapat.
 
-**Catatan adopsi:** kebijakan ini baru berlaku sesudah disetujui dan dihubungkan dari `AGENTS.md` serta indeks dokumentasi. Draft belum mengubah kewenangan apa pun.
+**Catatan adopsi:** dokumen sudah ditautkan dari `AGENTS.md` dan indeks dokumentasi, tetapi statusnya tetap **DRAFT** sampai ratifikasi eksplisit. Link discoverability tidak sama dengan persetujuan kewenangan ataupun izin rilis.

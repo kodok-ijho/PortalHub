@@ -53,3 +53,7 @@ Every ticket needs acceptance criteria, tests, DB migration and permission check
 - **QA-001** Update [Requirements Traceability](Requirements-Traceability.md) for each accepted ticket with commit, test and UAT evidence.
 
 **No credentials included or requested in these docs.** Production launch still gated by pricing, legal/provider and security approval.
+
+## Agent readiness execution layer (bukan perubahan roadmap)
+
+Untuk pemecahan task dan dependency DAG, lihat [Agent Execution Backlog](Agent-Execution-Backlog.md). Untuk keputusan yang masih terbuka, lihat [Decision Closure Register](Decision-Closure-Register.md); untuk batas mulai paralel/produksi, lihat [Agent Readiness Checklist](../11-agent-operations/AGENT-READINESS-CHECKLIST.md). Fase 0–7 dan acceptance gate di atas tetap menjadi urutan resmi; status document draft/mock bukan bukti selesai.

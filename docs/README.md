@@ -96,3 +96,14 @@ Setiap file berlabel *proposed*, *draft*, *TBD* atau *not implemented* tidak bol
 - [Agent Task Contract & Review Gate](11-agent-operations/AGENT-TASK-CONTRACT.md)
 
 Dokumen ini merupakan pedoman tambahan untuk AI coding agent paralel, **belum keputusan implementasi/produksi yang final**. Ikuti [Roadmap](09-delivery/Roadmap.md), [Decision Register](00-product/Decisions.md) dan [AI-Agents](AI-Agents.md) sebagai acuan yang tetap berlaku.
+
+## Kesiapan eksekusi agent — audit 21 November 2026
+
+- [Agent Readiness & Go/No-Go Checklist](11-agent-operations/AGENT-READINESS-CHECKLIST.md)
+- [Agent Execution Backlog dan dependency DAG](09-delivery/Agent-Execution-Backlog.md)
+- [Decision Closure Register](09-delivery/Decision-Closure-Register.md)
+- [API Contract Coverage Matrix](08-operations/API-Coverage.md)
+- [OpenAPI 3.1 design draft](08-operations/OpenAPI.yaml) — kontrak tambahan, **bukan endpoint yang sudah diimplementasikan**
+- [Documentation CI script](../scripts/check_docs.py) dan [GitHub Actions workflow](../.github/workflows/docs-quality.yml)
+
+Panduan baru **tidak mengesahkan** keputusan C/D, tidak menunjukkan CI sudah lulus, dan tidak menggantikan aturan [AGENTS](../AGENTS.md). Agent boleh mulai pekerjaan aman fase 0; pengembangan paralel dan produksi memiliki gate terpisah.

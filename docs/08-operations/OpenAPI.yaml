@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PortalHub API — Design Contract
-  version: 0.2.0-draft
+  version: 0.3.0-draft
   description: |
     Rancangan kontrak API v1, bukan endpoint yang sudah berjalan.
     Payment gateway hanya untuk layanan PortalHub, bukan IPL/sewa/event.
@@ -16,6 +16,8 @@ tags:
   - name: Billing
   - name: Storage
   - name: Ads
+  - name: Kos
+  - name: Warga
 paths:
   /me/contexts:
     get:
@@ -378,6 +380,311 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+  /organizations/{organization_id}/members:
+    get:
+      tags: [Organizations]
+      summary: List members in an authorized organization
+      operationId: listOrganizationMembers
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+      responses:
+        "200":
+          description: Scoped members; excludes unneeded private profile fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /organizations/{organization_id}/invitations:
+    post:
+      tags: [Organizations]
+      summary: Issue audited, expiring and scoped organization invitation
+      operationId: createOrganizationInvitation
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, product_code, role_code]
+              properties:
+                email: {type: string, format: email}
+                product_code: {type: string, enum: [portalkos, portalwarga, portaliklan]}
+                role_code: {type: string}
+                scope_type: {type: [string, "null"]}
+                scope_id: {type: [string, "null"], format: uuid}
+      responses:
+        "201":
+          description: Invitation created; token never returned in list or logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /organizations/{organization_id}/wallet/ledger:
+    get:
+      tags: [Billing]
+      summary: Read wallet transaction ledger scoped to billing permissions
+      operationId: listWalletLedger
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Paginated immutable ledger entries, no provider secrets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LedgerListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /kos/{organization_id}/properties:
+    get:
+      tags: [Kos]
+      summary: List properties visible in actor property scope
+      operationId: listKosProperties
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Scoped property summaries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      tags: [Kos]
+      summary: Create property under active product entitlement
+      operationId: createKosProperty
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: {type: string, minLength: 1, maxLength: 160}
+                slug: {type: string, maxLength: 100}
+      responses:
+        "201":
+          description: Property created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /kos/{organization_id}/payment-records:
+    post:
+      tags: [Kos]
+      summary: Record external cash or transfer payment without using platform gateway
+      operationId: recordKosPayment
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [lease_id, amount_minor, method, received_at]
+              properties:
+                lease_id: {type: string, format: uuid}
+                amount_minor: {type: integer, format: int64, minimum: 1, description: Whole IDR rupiah}
+                method: {type: string, enum: [cash, bank_transfer]}
+                received_at: {type: string, format: date-time}
+                evidence_asset_id: {type: [string, "null"], format: uuid}
+      responses:
+        "201":
+          description: Manual payment record pending internal verification; not provider settled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /kos/{organization_id}/payment-records/{payment_record_id}/verify:
+    post:
+      tags: [Kos]
+      summary: Authorized internal verification or rejection of external payment record
+      operationId: verifyKosPayment
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - name: payment_record_id
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: {type: string, enum: [verify, reject]}
+                reason: {type: string, maxLength: 500}
+      responses:
+        "200":
+          description: Verified internally with actor and audit trail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /warga/{organization_id}/events/{event_id}/finance:
+    get:
+      tags: [Warga]
+      summary: Scoped event financial summary; org owner alone is insufficient
+      operationId: getWargaEventFinance
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - name: event_id
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+      responses:
+        "200":
+          description: Event-specific account summary, excludes other event/general accounts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventFinanceResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /warga/{organization_id}/events/{event_id}/transactions:
+    post:
+      tags: [Warga]
+      summary: Record an external income/expense in a specifically granted event account
+      operationId: createWargaEventTransaction
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+        - name: event_id
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [account_id, kind, amount_minor, occurred_at]
+              properties:
+                account_id: {type: string, format: uuid}
+                kind: {type: string, enum: [income, expense]}
+                amount_minor: {type: integer, format: int64, minimum: 1, description: Whole IDR rupiah}
+                occurred_at: {type: string, format: date-time}
+                description: {type: string, maxLength: 500}
+      responses:
+        "201":
+          description: Audited transaction, linked to event-specific account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /ads/{listing_id}/publish:
+    post:
+      tags: [Ads]
+      summary: Publish only after explicit consent, ownership verification and moderation
+      operationId: publishAdListing
+      parameters:
+        - name: listing_id
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "200":
+          description: Published when all mandatory policy and moderation gates pass
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /files/{asset_id}:
+    get:
+      tags: [Storage]
+      summary: Get authorized asset metadata without private object URL
+      operationId: getFileMetadata
+      parameters:
+        - $ref: "#/components/parameters/AssetId"
+      responses:
+        "200":
+          description: Scoped non-secret asset metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileMetadataResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [Storage]
+      summary: Request audited logical deletion respecting legal hold and retention
+      operationId: deleteFileAsset
+      parameters:
+        - $ref: "#/components/parameters/AssetId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "202":
+          description: Deletion accepted only if hold/retention permits
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutationResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /organizations/{organization_id}/storage-usage:
+    get:
+      tags: [Storage]
+      summary: View authorized storage used and reserved; quota policy must be approved
+      operationId: getOrganizationStorageUsage
+      parameters:
+        - $ref: "#/components/parameters/OrganizationId"
+      responses:
+        "200":
+          description: Usage in bytes, not a promise of quota granted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StorageUsageResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 components:
   securitySchemes:
     bearerAuth:
@@ -385,6 +692,10 @@ components:
       scheme: bearer
       bearerFormat: Supabase access token
   parameters:
+    Cursor:
+      name: cursor
+      in: query
+      schema: {type: string}
     OrganizationId:
       name: organization_id
       in: path
@@ -408,6 +719,88 @@ components:
         minLength: 8
         maxLength: 160
   schemas:
+    MemberListResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok: {type: boolean, const: true}
+        data:
+          type: array
+          items:
+            type: object
+            required: [user_id, status]
+            properties:
+              user_id: {type: string, format: uuid}
+              status: {type: string}
+              product_code: {type: string}
+    LedgerListResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok: {type: boolean, const: true}
+        data:
+          type: array
+          items:
+            type: object
+            required: [id, direction, amount_minor, created_at]
+            properties:
+              id: {type: string, format: uuid}
+              direction: {type: string, enum: [credit, debit]}
+              amount_minor: {type: integer, format: int64}
+              created_at: {type: string, format: date-time}
+        meta: {type: object, additionalProperties: true}
+    PropertyListResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok: {type: boolean, const: true}
+        data:
+          type: array
+          items:
+            type: object
+            required: [id, name]
+            properties:
+              id: {type: string, format: uuid}
+              name: {type: string}
+              slug: {type: string}
+        meta: {type: object, additionalProperties: true}
+    EventFinanceResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok: {type: boolean, const: true}
+        data:
+          type: object
+          required: [event_id, account_id]
+          properties:
+            event_id: {type: string, format: uuid}
+            account_id: {type: string, format: uuid}
+            balance_minor: {type: integer, format: int64, description: Whole IDR rupiah}
+    FileMetadataResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok: {type: boolean, const: true}
+        data:
+          type: object
+          required: [asset_id, status]
+          properties:
+            asset_id: {type: string, format: uuid}
+            status: {type: string}
+            filename: {type: string}
+            mime_type: {type: string}
+            size_bytes: {type: integer, format: int64}
+    StorageUsageResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok: {type: boolean, const: true}
+        data:
+          type: object
+          required: [used_bytes, reserved_bytes]
+          properties:
+            used_bytes: {type: integer, format: int64, minimum: 0}
+            reserved_bytes: {type: integer, format: int64, minimum: 0}
     Error:
       type: object
       required: [code, message]

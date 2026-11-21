@@ -130,6 +130,10 @@ Next independent work:
 
 Jadwal standup atau pilihan sistem orkestrasi tidak dipaksakan oleh dokumen ini. Kalau platform tooling tidak dapat menjamin locking/queue, Lead wajib mengurangi concurrency pada area bersama.
 
-## 10. Kondisi berhenti
+## 10. Batas aktivasi operasional
+
+Protokol ini adalah **DRAFT** yang telah ditautkan dari root AGENTS, belum otomatis mengonfigurasi GitHub. Sebelum menjalankan beberapa agent dengan akses tulis, operator/integrator harus memeriksa aturan branch protection atau ruleset, required review/check, izin token least privilege, dan hak merge. Kehadiran file instruksi **bukan bukti** bahwa penguncian PR, merge queue, atau CI sudah aktif. Lihat [Agent Readiness Checklist](AGENT-READINESS-CHECKLIST.md).
+
+## 11. Kondisi berhenti
 
 Agent harus **menghentikan hanya operasi terdampak** ketika hendak: menyentuh provider pembayaran live, memproses atau memigrasi data pribadi nyata, membuat produk berbayar tanpa terms dan harga sah, mengubah permission sensitif tanpa review, mengakses production credentials atau mempromosikan release tanpa approval. Beri issue dan lanjutkan pekerjaan aman lain yang memenuhi `ready`.

@@ -1,0 +1,36 @@
+name: Documentation Quality
+
+on:
+  pull_request:
+    paths:
+      - "README.md"
+      - "AGENTS.md"
+      - "docs/**"
+      - "scripts/check_docs.py"
+      - ".github/workflows/docs-quality.yml"
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "AGENTS.md"
+      - "docs/**"
+      - "scripts/check_docs.py"
+      - ".github/workflows/docs-quality.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  docs-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install YAML parser
+        run: python -m pip install "PyYAML==6.0.2"
+      - name: Validate relative links and OpenAPI references
+        run: python scripts/check_docs.py

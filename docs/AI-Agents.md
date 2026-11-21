@@ -119,3 +119,7 @@ Per task: tentukan domain, requirement ID, data exposure, authorization scope, s
 ## Panduan kolaborasi multi-agent (draft)
 
 Untuk pembagian tugas paralel, gunakan [Autonomous Development](11-agent-operations/AUTONOMOUS-DEVELOPMENT.md), [Multi-Agent Protocol](11-agent-operations/MULTI-AGENT-PROTOCOL.md), [Implementation Defaults](11-agent-operations/IMPLEMENTATION-DEFAULTS.md) dan [Agent Task Contract](11-agent-operations/AGENT-TASK-CONTRACT.md). Seluruhnya masih **DRAFT** dan melengkapi, bukan mengesampingkan, keputusan produk, batas keamanan, roadmap resmi, maupun gate approval produksi.
+
+## Readiness sebelum paralelisasi
+
+Baca [Agent Readiness Checklist](11-agent-operations/AGENT-READINESS-CHECKLIST.md), [Backlog dan DAG](09-delivery/Agent-Execution-Backlog.md), [Register keputusan](09-delivery/Decision-Closure-Register.md), dan [API Coverage](08-operations/API-Coverage.md). CI dokumentasi hanya menguji validitas statis; branch protection, review, dan CI aplikasi belum boleh dianggap ada hanya karena file workflow tersedia. OpenAPI adalah rancangan (bukan endpoint deployed), termasuk endpoint domain yang baru ditambahkan.

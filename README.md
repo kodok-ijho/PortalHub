@@ -27,7 +27,7 @@ flowchart TB
     HUB --> K["PortalKos"]
     HUB --> I["PortalIklan"]
     HUB --> B["Kantong & Billing layanan PortalHub"]
-    W --> D["Supabase: Auth + PostgreSQL RLS + Storage"]
+    W --> D["Supabase: Auth + PostgreSQL RLS (tanpa file bytes)"]
     K --> D
     I --> D
     B --> D
