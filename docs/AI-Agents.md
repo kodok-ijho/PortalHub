@@ -115,3 +115,7 @@ Per task: tentukan domain, requirement ID, data exposure, authorization scope, s
 - API machine-readable yang tersedia adalah **draft** [OpenAPI.yaml](08-operations/OpenAPI.yaml), bukan janji endpoint berjalan. Tambahkan schema & contract tests saat coding.
 - Semua tugas harus mengisi [Requirements Traceability](09-delivery/Requirements-Traceability.md). Jangan mengubah status implemented/tested tanpa bukti commit/CI.
 - **Kecualikan setup dan nilai credential** dari dokumentasi ini; jangan meminta/menuliskan secret, token, key atau password.
+
+## Panduan kolaborasi multi-agent (draft)
+
+Untuk pembagian tugas paralel, gunakan [Autonomous Development](11-agent-operations/AUTONOMOUS-DEVELOPMENT.md), [Multi-Agent Protocol](11-agent-operations/MULTI-AGENT-PROTOCOL.md), [Implementation Defaults](11-agent-operations/IMPLEMENTATION-DEFAULTS.md) dan [Agent Task Contract](11-agent-operations/AGENT-TASK-CONTRACT.md). Seluruhnya masih **DRAFT** dan melengkapi, bukan mengesampingkan, keputusan produk, batas keamanan, roadmap resmi, maupun gate approval produksi.

@@ -19,3 +19,7 @@ Critical principles:
 - **Never create, request, include or publish credential values in documentation, source examples, pull requests or logs.** Credential setup is outside the current documentation scope.
 
 See [docs/AI-Agents.md](docs/AI-Agents.md) for complete policies.
+
+## Multi-agent implementation guidance (draft)
+
+For parallel AI development, also read the **draft** documents in [`docs/11-agent-operations/`](docs/11-agent-operations/): [Autonomous Development](docs/11-agent-operations/AUTONOMOUS-DEVELOPMENT.md), [Multi-Agent Protocol](docs/11-agent-operations/MULTI-AGENT-PROTOCOL.md), [Implementation Defaults](docs/11-agent-operations/IMPLEMENTATION-DEFAULTS.md), and [Agent Task Contract](docs/11-agent-operations/AGENT-TASK-CONTRACT.md). These supplements do not override accepted product decisions, security guardrails, or release approvals.

@@ -87,3 +87,12 @@ Kembali ke [README proyek](../README.md) · [Pemetaan requirement ke tes](09-del
 Google OAuth melalui Supabase Auth adalah login utama, sedangkan Supabase PostgreSQL RLS + API menegakkan hak akses. Cloudflare R2 menyimpan objek file; RLS hanya melindungi metadata DB, sehingga backend harus memeriksa izin sebelum URL privat dibuat. **IPL, sewa dan dana event hanya dicatat** sebagai pembayaran di luar platform; payment gateway dan Kantong hanya untuk layanan PortalHub sendiri.
 
 Setiap file berlabel *proposed*, *draft*, *TBD* atau *not implemented* tidak boleh dianggap keputusan produksi. Belum ada implementasi, migrations, credential ataupun CI yang dinyatakan siap tanpa bukti terverifikasi.
+
+## 11 — Agent operations (draft)
+
+- [Autonomous Development Policy](11-agent-operations/AUTONOMOUS-DEVELOPMENT.md)
+- [Multi-Agent Collaboration Protocol](11-agent-operations/MULTI-AGENT-PROTOCOL.md)
+- [Implementation Defaults](11-agent-operations/IMPLEMENTATION-DEFAULTS.md)
+- [Agent Task Contract & Review Gate](11-agent-operations/AGENT-TASK-CONTRACT.md)
+
+Dokumen ini merupakan pedoman tambahan untuk AI coding agent paralel, **belum keputusan implementasi/produksi yang final**. Ikuti [Roadmap](09-delivery/Roadmap.md), [Decision Register](00-product/Decisions.md) dan [AI-Agents](AI-Agents.md) sebagai acuan yang tetap berlaku.
