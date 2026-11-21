@@ -12,7 +12,7 @@
 
 | Table | Key columns | Notes |
 |---|---|---|
-| `profiles` | id auth user FK, display_name | PII private |
+| `profiles` | `user_id` PK FK `auth.users.id`, `display_name` | PII private; mengikuti Database-Schema.md |
 | `organizations` | id, slug unique, type, verification_status | org identity |
 | `organization_members` | org_id, user_id, status | many-to-many |
 | `products` | id, code | catalog |
